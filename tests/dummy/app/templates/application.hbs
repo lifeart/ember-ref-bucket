@@ -1,3 +1,9 @@
-<h2 id="title">Welcome to Ember</h2>
+{{get (ref-to "foo" bucket=this) "textContent"}}
+
+<h2 id="title" {{ref "foo" bucket=this}}>Welcome to Ember</h2>
 
 {{outlet}}
+
+{{get (ref-to "foo" bucket=this) "textContent"}}
+
+:{{this.value}}:
