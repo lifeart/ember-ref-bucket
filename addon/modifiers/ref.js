@@ -82,18 +82,35 @@ export default class RefModifier extends Modifier {
   markDirty() {
     bucketFor(this._ctx).dirtyTrackedCell(this._key);
   }
-  didReceiveArguments() {
+  cleanMutationObservers() {
     if (this._mutationsObserver) {
       this._mutationsObserver.disconnect();
     }
+  }
+  cleanResizeObservers() {
+    if (this._resizeObserver) {
+      this._resizeObserver.unobserve(this.element);
+    }
+  }
+  installMutationObservers() {
+    this._mutationsObserver = new MutationObserver(this.markDirty);
+    this._mutationsObserver.observe(this.element, this.mutationObserverOptions);
+  }
+  installResizeObservers() {
+    this._resizeObserver = new ResizeObserver(this.markDirty);
+    this._resizeObserver.observe(this.element);
+  }
+  didReceiveArguments() {
+    this.cleanMutationObservers();
+    this.cleanResizeObservers();
     if (this.name !== this._key || this._ctx !== this.ctx) {
       bucketFor(this._ctx).add(this._key, null);
     }
     this._ctx = this.ctx;
     this._key = this.name;
     bucketFor(this.ctx).add(this.name, this.element);
-    this._mutationsObserver = new MutationObserver(this.markDirty);
-    this._mutationsObserver.observe(this.element, this.mutationObserverOptions);
+    this.installMutationObservers();
+    this.installResizeObservers();
   }
   get ctx() {
     return this.args.named.bucket || getOwner(this);
