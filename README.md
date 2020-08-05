@@ -1,6 +1,8 @@
 ember-ref-bucket
 ==============================================================================
 
+This addon created as rethinking of `ember-ref-modifier`, with simplified api and without cons of previous implementation.
+
 See https://github.com/lifeart/ember-ref-modifier/issues/345
 
 
