@@ -77,7 +77,6 @@ export function bucketFor(rawCtx) {
   if (!buckets.has(ctx)) {
     buckets.set(ctx, createBucket());
     registerDestructor(ctx, () => {
-      console.log('destructor', ctx);
       buckets.delete(ctx);
     });
   }
