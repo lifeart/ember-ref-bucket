@@ -1,13 +1,13 @@
-import { modifier } from "ember-modifier";
+import Modifier from "ember-modifier";
 import { getOwner } from "@ember/application";
 import { registerDestructor } from "@ember/destroyable";
 import { tracked } from "@glimmer/tracking";
+import { action } from "@ember/object";
 
 class FieldCell {
   @tracked value = null;
 }
 
-const root = {};
 function createBucket() {
   return {
     bucket: {},
@@ -20,6 +20,11 @@ function createBucket() {
     get(name) {
       this.createTrackedCell(name);
       return this.bucket[name] || null;
+    },
+    dirtyTrackedCell(name) {
+      this.createTrackedCell(name);
+      const val = this.keys[name].value;
+      this.keys[name].value = val;
     },
     getTracked(name) {
       this.createTrackedCell(name);
@@ -50,14 +55,12 @@ function createBucket() {
 }
 const buckets = new WeakMap();
 export function bucketFor(rawCtx) {
-  const ctx = rawCtx ? rawCtx : root;
+  const ctx = rawCtx;
   if (!buckets.has(ctx)) {
     buckets.set(ctx, createBucket());
-    if (getOwner(ctx)) {
-      registerDestructor(ctx, () => {
-        buckets.delete(ctx);
-      });
-    }
+    registerDestructor(ctx, () => {
+      buckets.delete(ctx);
+    });
   }
   return buckets.get(ctx);
 }
@@ -66,10 +69,42 @@ export function watchFor(name, bucketRef, cb) {
   const bucket = bucketFor(bucketRef);
   return bucket.addNotificationFor(name, cb);
 }
-export default modifier(function ref(element, [name], hash) {
-  const bucket = bucketFor(hash.bucket);
-  bucket.add(name, element);
-  return () => {
-    bucket.add(name, null);
-  };
-});
+export default class RefModifier extends Modifier {
+  _key = this.name;
+  _ctx = this.ctx;
+  mutationObserverOptions = {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true
+  }
+  @action
+  markDirty() {
+    bucketFor(this._ctx).dirtyTrackedCell(this._key);
+  }
+  didReceiveArguments() {
+    if (this._mutationsObserver) {
+      this._mutationsObserver.disconnect();
+    }
+    if (this.name !== this._key || this._ctx !== this.ctx) {
+      bucketFor(this._ctx).add(this._key, null);
+    }
+    this._ctx = this.ctx;
+    this._key = this.name;
+    bucketFor(this.ctx).add(this.name, this.element);
+    this._mutationsObserver = new MutationObserver(this.markDirty);
+    this._mutationsObserver.observe(this.element, this.mutationObserverOptions);
+  }
+  get ctx() {
+    return this.args.named.bucket || getOwner(this);
+  }
+  get name() {
+    return this.args.positional[0];
+  }
+  willDestroy() {
+    bucketFor(this.ctx).add(this.name, null);
+    if (this._mutationsObserver) {
+      this._mutationsObserver.disconnect();
+    }
+  }
+}

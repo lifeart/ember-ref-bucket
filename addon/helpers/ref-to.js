@@ -3,7 +3,7 @@ import { bucketFor, watchFor } from './../modifiers/ref';
 import { registerDestructor, unregisterDestructor } from '@ember/destroyable';
 
 export default class RefToHelper extends Helper {
-  compute([name], { bucket }) {
+  compute([name], { bucket, tracked }) {
     if (this._name !== name) {
       if (this._watcher) {
         unregisterDestructor(this, this._watcher);
@@ -14,6 +14,10 @@ export default class RefToHelper extends Helper {
       registerDestructor(this, this._watcher);
       this._name = name;
     }
-    return bucketFor(bucket).get(name);
+    if (tracked) {
+      return bucketFor(bucket).getTracked(name);
+    } else {
+      return bucketFor(bucket).get(name);
+    }
   }
 }
