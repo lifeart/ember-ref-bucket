@@ -1,14 +1,21 @@
-<h2 id="title" contenteditable {{tracked-ref "foo"}}>
-  Welcome to Ember
-</h2>
+<h2 id="title" contenteditable {{tracked-ref "foo"}}><span>Welcome to Ember</span></h2>
 
+{{#let (tracked-ref-to "foo") as |node|}}
 <br />
-{{get (tracked-ref-to "foo") "textContent"}}
-
+Content: {{node.textContent}}
 <br />
-Content width:
-{{get (tracked-ref-to "foo") "clientWidth"}}
+Child nodes: {{node.children.length}}
+<br />
+Content width: {{node.clientWidth}}
+<br />
+Content size: {{node.textContent.length}} symbols
+<br />
+First child tag name: {{node.firstChild.tagName}}
 <br />
 
+{{#if node}}
+  {{#in-element node insertBefore=null}}<span> ({{node.firstChild.textContent.length}} chars)</span>{{/in-element}}
+{{/if}}
+{{/let}}
 
-Same ref: {{this.value}}
+Same content from @ref: {{this.value}}
