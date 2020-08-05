@@ -45,13 +45,16 @@ Usage
 ## Available decorators:
 
 ```js
-import { ref, globalRef, trackedRef, trackedGlobalRef } from 'ember-ref-bucket';
+import { ref, globalRef, trackedRef, trackedGlobalRef, registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-bucket';
 
 /*
   ref - usage: @ref('foo'), ref to bucket with current component context
   globalRef - usage: @globalRef('foo'), ref to global context (app)
   trackedRef - usage: @trackedRef('foo'), tracked ref to local context
   trackedGlobalRef - usage: @trackedGlobalRef('foo'), tracked ref to global context (app)
+
+  registerNodeDestructor - to assign any ref-node destructor
+  unregisterNodeDestructor - to remove assigned ref-node destructor 
 */
 ```
 
@@ -110,6 +113,40 @@ class Component {
 <SecondComponent @helloNode={{ref-to "field"}} />
 ```
 
+### Use `registerNodeDestructor`
+
+This method will be very useful if we want to wrap node into some library and control it's lifecycle.
+
+```hbs
+<div {{ref "field"}}>
+```
+
+```js
+import { ref, registerNodeDestructor } from 'ember-ref-bucket';
+
+class NodeWrapper {
+  constructor(node) {
+    this.node = node;
+  }
+  destroy() {
+    this.node = null;
+  }
+  value() {
+    return this.node.textContent;
+  }
+}
+
+export default class ApplicationController extends Controller {
+  @ref('foo', (node) => {
+    const instance = new NodeWrapper(node);
+    registerNodeDestructor(node, () => instance.destroy());
+    return instance;
+  }) node = null;
+  get value() {
+    return this.node?.value();
+  }
+}
+```
 
 Contributing
 ------------------------------------------------------------------------------

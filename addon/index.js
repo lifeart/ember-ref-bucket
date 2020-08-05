@@ -1,41 +1,64 @@
 import { bucketFor } from './modifiers/ref';
 import { getOwner } from "@ember/application";
+export { registerNodeDestructor, unregisterNodeDestructor } from './modifiers/ref';
 
-export function ref(name) {
+function maybeReturnCreated(value, createdValues, fn, ctx) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (fn) {
+    if (!createdValues.has(value)) {
+      createdValues.set(value, fn.call(ctx, value));
+    }
+    return createdValues.get(value);
+  } else {
+    return value;
+  }
+}
+
+export function ref(name, fn) {
   return function() {
+    const createdValues = new WeakMap();
     return {
       get() {
-        return bucketFor(this).get(name);
+        const value = bucketFor(this).get(name);
+        return maybeReturnCreated(value, createdValues, fn, this);
       }
     }
   }
 }
 
-export function globalRef(name) {
+export function globalRef(name, fn) {
   return function() {
+    const createdValues = new WeakMap();
     return {
       get() {
-        return bucketFor(getOwner(this)).get(name);
+        const value = bucketFor(getOwner(this)).get(name);
+        return maybeReturnCreated(value, createdValues, fn, this);
       }
     }
   }
 }
 
-export function trackedRef(name) {
+export function trackedRef(name, fn) {
   return function() {
+    const createdValues = new WeakMap();
     return {
       get() {
-        return bucketFor(this).getTracked(name);
+        const value = bucketFor(this).getTracked(name);
+        return maybeReturnCreated(value, createdValues, fn, this);
       }
     }
   }
 }
 
-export function trackedGlobalRef(name) {
+export function trackedGlobalRef(name, fn) {
   return function() {
+    const createdValues = new WeakMap();
     return {
       get() {
-        return bucketFor(getOwner(this)).getTracked(name);
+        const value = bucketFor(getOwner(this)).getTracked(name);
+        return maybeReturnCreated(value, createdValues, fn, this);
       }
     }
   }

@@ -1,9 +1,25 @@
 import Controller from '@ember/controller';
-import { trackedRef } from 'ember-ref-bucket';
+import { trackedRef, registerNodeDestructor } from 'ember-ref-bucket';
+
+class NodeWrapper {
+  constructor(node) {
+    this.node = node;
+  }
+  destroy() {
+    this.node = null;
+  }
+  value() {
+    return this.node.textContent;
+  }
+}
 
 export default class ApplicationController extends Controller {
-  @trackedRef('foo') node = null;
+  @trackedRef('foo', (node) => {
+    const instance = new NodeWrapper(node);
+    registerNodeDestructor(node, () => instance.destroy());
+    return instance;
+  }) node = null;
   get value() {
-    return this.node?.textContent;
+    return this.node?.value();
   }
 }

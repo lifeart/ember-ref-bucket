@@ -5,7 +5,6 @@ import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import { assert } from '@ember/debug';
 
-
 class FieldCell {
   @tracked value = null;
 }
@@ -56,6 +55,17 @@ function createBucket() {
   };
 }
 const buckets = new WeakMap();
+const nodeDestructors = new WeakMap();
+export function registerNodeDestructor(node, cb) {
+  if (!nodeDestructors.has(node)) {
+    nodeDestructors.set(node, []);
+  }
+  nodeDestructors.get(node).push(cb);
+}
+export function unregisterNodeDestructor(node, cb) {
+  const destructors = nodeDestructors.get(node) || [];
+  nodeDestructors.set(node, destructors.filter((el)=> el !== cb));
+}
 export function bucketFor(rawCtx) {
   const ctx = rawCtx;
   if (!buckets.has(ctx)) {
@@ -135,5 +145,6 @@ export default class RefModifier extends Modifier {
     bucketFor(this.ctx).add(this.name, null);
     this.cleanMutationObservers();
     this.cleanResizeObservers();
+    (nodeDestructors.get(this.element) || []).forEach((cb) => cb());
   }
 }
