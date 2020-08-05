@@ -1,11 +1,14 @@
-<h2 id="title" contenteditable {{ref "foo" tracked=true}}>
+<h2 id="title" contenteditable {{tracked-ref "foo"}}>
   Welcome to Ember
 </h2>
+
 <br />
-{{get (ref-to "foo" tracked=true) "textContent"}}
-Same ref:
-{{this.value}}
+{{get (tracked-ref-to "foo") "textContent"}}
+
 <br />
 Content width:
-{{get (ref-to "foo" tracked=true) "clientWidth"}}
+{{get (tracked-ref-to "foo") "clientWidth"}}
 <br />
+
+
+Same ref: {{this.value}}

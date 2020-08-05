@@ -3,6 +3,8 @@ import { getOwner } from "@ember/application";
 import { registerDestructor } from "@ember/destroyable";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
+import { assert } from '@ember/debug';
+
 
 class FieldCell {
   @tracked value = null;
@@ -101,6 +103,7 @@ export default class RefModifier extends Modifier {
     this._resizeObserver.observe(this.element);
   }
   didReceiveArguments() {
+    assert(`You must provide string as first positional argument for {{${this.args.name.debugName}}}`, typeof this.name === 'string' && this.name.length > 0)
     this.cleanMutationObservers();
     this.cleanResizeObservers();
     if (this.name !== this._key || this._ctx !== this.ctx) {
@@ -115,6 +118,11 @@ export default class RefModifier extends Modifier {
     }
   }
   get ctx() {
+    assert(
+      `ember-ref-bucket: You trying to use {{${this.args.named.debugName}}} as local reference for template-only component. Replace it to {{global-ref "${this.args.positional[0]}"}}`,
+      this.args.named.bucket !== null
+    );
+
     return this.args.named.bucket || getOwner(this);
   }
   get isTracked() {
