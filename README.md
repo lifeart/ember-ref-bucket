@@ -156,7 +156,7 @@ class NodeWrapper {
 }
 
 export default class ApplicationController extends Controller {
-  @ref('foo', (node) => {
+  @ref('field', (node) => {
     const instance = new NodeWrapper(node);
     registerNodeDestructor(node, () => instance.destroy());
     return instance;
