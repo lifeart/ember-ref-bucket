@@ -1,6 +1,9 @@
-import { bucketFor } from './modifiers/ref';
+import { bucketFor, resolveGlobalRef } from "./modifiers/ref";
 import { getOwner } from "@ember/application";
-export { registerNodeDestructor, unregisterNodeDestructor } from './modifiers/ref';
+export {
+  registerNodeDestructor,
+  unregisterNodeDestructor,
+} from "./modifiers/ref";
 
 function maybeReturnCreated(value, createdValues, fn, ctx) {
   if (value === null || value === undefined) {
@@ -17,49 +20,49 @@ function maybeReturnCreated(value, createdValues, fn, ctx) {
 }
 
 export function ref(name, fn) {
-  return function() {
+  return function () {
     const createdValues = new WeakMap();
     return {
       get() {
         const value = bucketFor(this).get(name);
         return maybeReturnCreated(value, createdValues, fn, this);
-      }
-    }
-  }
+      },
+    };
+  };
 }
 
 export function globalRef(name, fn) {
-  return function() {
+  return function () {
     const createdValues = new WeakMap();
     return {
       get() {
-        const value = bucketFor(getOwner(this)).get(name);
+        const value = bucketFor(getOwner(this) || resolveGlobalRef()).get(name);
         return maybeReturnCreated(value, createdValues, fn, this);
-      }
-    }
-  }
+      },
+    };
+  };
 }
 
 export function trackedRef(name, fn) {
-  return function() {
+  return function () {
     const createdValues = new WeakMap();
     return {
       get() {
         const value = bucketFor(this).getTracked(name);
         return maybeReturnCreated(value, createdValues, fn, this);
-      }
-    }
-  }
+      },
+    };
+  };
 }
 
 export function trackedGlobalRef(name, fn) {
-  return function() {
+  return function () {
     const createdValues = new WeakMap();
     return {
       get() {
-        const value = bucketFor(getOwner(this)).getTracked(name);
+        const value = bucketFor(getOwner(this) || resolveGlobalRef()).getTracked(name);
         return maybeReturnCreated(value, createdValues, fn, this);
-      }
-    }
-  }
+      },
+    };
+  };
 }

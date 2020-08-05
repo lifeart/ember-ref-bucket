@@ -5,8 +5,14 @@ import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import { assert } from '@ember/debug';
 
+let lastGlobalRef = null;
+
 class FieldCell {
   @tracked value = null;
+}
+
+export function resolveGlobalRef() {
+  return lastGlobalRef;
 }
 
 function createBucket() {
@@ -71,6 +77,7 @@ export function bucketFor(rawCtx) {
   if (!buckets.has(ctx)) {
     buckets.set(ctx, createBucket());
     registerDestructor(ctx, () => {
+      console.log('destructor', ctx);
       buckets.delete(ctx);
     });
   }
@@ -84,6 +91,10 @@ export function watchFor(name, bucketRef, cb) {
 export default class RefModifier extends Modifier {
   _key = this.name;
   _ctx = this.ctx;
+  constructor() {
+    super(...arguments)
+    lastGlobalRef = getOwner(this);
+  }
   mutationObserverOptions = {
     attributes: true,
     characterData: true,
@@ -113,7 +124,7 @@ export default class RefModifier extends Modifier {
     this._resizeObserver.observe(this.element);
   }
   didReceiveArguments() {
-    assert(`You must provide string as first positional argument for {{${this.args.name.debugName}}}`, typeof this.name === 'string' && this.name.length > 0)
+    assert(`You must provide string as first positional argument for {{${this.args.named.debugName}}}`, typeof this.name === 'string' && this.name.length > 0)
     this.cleanMutationObservers();
     this.cleanResizeObservers();
     if (this.name !== this._key || this._ctx !== this.ctx) {
@@ -142,7 +153,7 @@ export default class RefModifier extends Modifier {
     return this.args.positional[0];
   }
   willDestroy() {
-    bucketFor(this.ctx).add(this.name, null);
+    // bucketFor(this.ctx).add(this.name, null);
     this.cleanMutationObservers();
     this.cleanResizeObservers();
     (nodeDestructors.get(this.element) || []).forEach((cb) => cb());

@@ -1,11 +1,15 @@
 {
   "name": "ember-ref-bucket",
-  "version": "0.0.1",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "0.0.2",
+  "description": "Ember DOM reference modifiers, helpers and decorators",
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "ember-modifier",
+    "ember-element-modifier",
+    "ref-modifier",
+    "ref"
   ],
-  "repository": "https://github.com/lifeart/ember-ref-bucket.git",
+  "repository": "lifeart/ember-ref-bucket",
   "license": "MIT",
   "author": "Aleksandr Kanunnikov <lifeart92@gmail.com>",
   "directories": {

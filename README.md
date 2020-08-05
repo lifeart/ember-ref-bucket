@@ -45,19 +45,36 @@ Usage
 ## Available decorators:
 
 ```js
-import { ref, globalRef, trackedRef, trackedGlobalRef, registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-bucket';
+import { ref, globalRef, trackedRef, trackedGlobalRef } from 'ember-ref-bucket';
 
 /*
-  ref - usage: @ref('foo'), ref to bucket with current component context
-  globalRef - usage: @globalRef('foo'), ref to global context (app)
-  trackedRef - usage: @trackedRef('foo'), tracked ref to local context
-  trackedGlobalRef - usage: @trackedGlobalRef('foo'), tracked ref to global context (app)
+  ref - usage: @ref('foo', nodeWrapFn?), ref to bucket with current component context
+  globalRef - usage: @globalRef('foo', nodeWrapFn?), ref to global context (app)
+  trackedRef - usage: @trackedRef('foo', nodeWrapFn?), tracked ref to local context
+  trackedGlobalRef - usage: @trackedGlobalRef('foo', nodeWrapFn?), tracked ref to global context (app)
 
-  registerNodeDestructor - to assign any ref-node destructor
-  unregisterNodeDestructor - to remove assigned ref-node destructor 
 */
 ```
 
+## Available methods:
+
+```js
+import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-bucket';
+
+/*
+  registerNodeDestructor(node, fn) - to assign any ref-node destructor
+  unregisterNodeDestructor(node, fn) - to remove assigned ref-node destructor 
+
+  usage will be like:
+
+  @ref('field', (node) => {
+    const item = new InputMask(node);
+    registerNodeDestructor(node, () => item.destroy());
+    return item;
+  });
+*/
+
+```
 
 ## Definition of `@trackedRef` decorators
 
