@@ -23,6 +23,66 @@ ember install ember-ref-bucket
 Usage
 ------------------------------------------------------------------------------
 
+
+### Modifiers will be transformed according to this table:
+
+| Invocation                   | Will be transformed to                      |
+|------------------------------|---------------------------------------------|
+| `{{ref "foo"}}`               | `{{ref "foo" bucket=this}}`                   |
+| `{{tracked-ref "foo"}}`        | `{{ref "foo" bucket=this tracked=true}}`      |
+| `{{global-ref "foo"}} `        | `{{ref "foo" bucket=undefined}}`              |
+| `{{tracked-global-ref "foo"}}` | `{{ref "foo" bucket=undefined tracked=true}}` |
+
+## Helpers will be transformed according to this table:
+
+| Invocation                   | Will be transformed to                      |
+|------------------------------|---------------------------------------------|
+| `{{ref-to "foo"}}`               | `{{ref-to "foo" bucket=this}}`                   |
+| `{{tracked-ref-to "foo"}}`        | `{{ref-to "foo" bucket=this tracked=true}}`      |
+| `{{global-ref-to "foo"}} `        | `{{ref-to "foo" bucket=undefined}}`              |
+| `{{tracked-global-ref-to "foo"}}` | `{{ref-to "foo" bucket=undefined tracked=true}}` |
+
+## Available decorators:
+
+```js
+import { ref, globalRef, trackedRef, trackedGlobalRef } from 'ember-ref-bucket';
+
+/*
+  ref - usage: @ref('foo'), ref to bucket with current component context
+  globalRef - usage: @globalRef('foo'), ref to global context (app)
+  trackedRef - usage: @trackedRef('foo'), tracked ref to local context
+  trackedGlobalRef - usage: @trackedGlobalRef('foo'), tracked ref to global context (app)
+*/
+```
+
+
+## Definition of `@trackedRef` decorators
+
+* If you use dom node if `@tracked` chain calculations, you should use tracked ref.
+
+* If you don't need to rerun tracked chain (for example, you use ref only for some event-based dom access), you should not use tracked ref.
+
+## Definition of `{{tracked-ref}}` modifiers
+
+* If you need to watch for node changes (resize, content, attributes), you can use tracked modifier, it will add resize observer and mutation observer into according element and will mark property as "dirty" for any mutation
+
+
+## Definition of `{{tracked-ref-to}}` helpers
+
+* If you need to recalculate helper if some dome node changes (size, children, attributes), you need to use `tracked-ref-to` helper.
+* If you don't need it (you need to just have ref to dom node), you should choose `ref-to` helper.
+
+
+## Template-only components
+
+* `ref` modifier and `ref-to` helper will not work in template-only components (because of no context), you should use `global-ref` and `global-ref-to` instead. Or provide `bucket` param to `ref` modifier / helper.
+
+-----------
+
+## Examples
+
+### Link `div` to `node` property.
+
 ```hbs
 <div {{ref "field"}} ></div>
 ```
@@ -33,23 +93,22 @@ class Component {
 }
 ```
 
-where `{{ref "field"}}` will be transformed to `{{ref this "field"}}`,
-and `@ref` decorator will control property access (and will throw error if property does not yeat setted), it should fix all tracked issues.
+### Dynamically show `div` content updates
 
-one more interesting thing, we can share refs between components (we could add ability to have "global" refs), in this case, we will use `@ref("field")` to access ref-bucket, and we can introduce `{{ref-for "field"}}` helper, and it can return actual dom node, with same ref.
+```hbs
+<div {{tracked-ref "field"}}>hello</div>
 
-it may be `{{global-ref "footer"}}`, `@globalRef("footer")`, `{{global-ref-to "footer"}}`
+{{get (tracked-ref-to "field") "textContent"}}
 
-in therory "ref-bucket" approach may simplify dom ref usages for template-only components, for example
+```
+
+### Use `div` as component argument
 
 ```hbs
 <div {{ref "field"}}>hello</div>
 
-{{get (ref-to "field") "textContent"}}
-
 <SecondComponent @helloNode={{ref-to "field"}} />
 ```
-
 
 
 Contributing
