@@ -1,13 +1,13 @@
 {
   "name": "ember-ref-bucket",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
   ],
-  "repository": "",
+  "repository": "https://github.com/lifeart/ember-ref-bucket.git",
   "license": "MIT",
-  "author": "",
+  "author": "Aleksandr Kanunnikov <lifeart92@gmail.com>",
   "directories": {
     "doc": "doc",
     "test": "tests"
