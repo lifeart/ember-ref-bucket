@@ -109,19 +109,23 @@ export default class RefModifier extends Modifier {
     this._ctx = this.ctx;
     this._key = this.name;
     bucketFor(this.ctx).add(this.name, this.element);
-    this.installMutationObservers();
-    this.installResizeObservers();
+    if (this.isTracked) {
+      this.installMutationObservers();
+      this.installResizeObservers();
+    }
   }
   get ctx() {
     return this.args.named.bucket || getOwner(this);
+  }
+  get isTracked() {
+    return this.args.named.tracked || false;
   }
   get name() {
     return this.args.positional[0];
   }
   willDestroy() {
     bucketFor(this.ctx).add(this.name, null);
-    if (this._mutationsObserver) {
-      this._mutationsObserver.disconnect();
-    }
+    this.cleanMutationObservers();
+    this.cleanResizeObservers();
   }
 }
