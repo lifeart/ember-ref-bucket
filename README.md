@@ -16,7 +16,8 @@ Simple, use case will look like:
 ```js
 import Component from '@glimmer/component';
 import { ref } from 'ember-ref-bucket';
-class MyComponent extends Component {
+
+export default class MyComponent extends Component {
   @ref("FavouriteNode") node; 
   // this.node === "<div>hello</div>"`
 }
@@ -71,7 +72,8 @@ export class Player extends Component {
 ```ts
 import Component from '@glimmer/component';
 import { ref } from 'ember-ref-bucket';
-class MyComponent extends Component {
+
+export default class MyComponent extends Component {
   @ref("field") node = null;
 }
 ```
