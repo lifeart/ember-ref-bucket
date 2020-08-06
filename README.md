@@ -1,10 +1,26 @@
 ember-ref-bucket
 ==============================================================================
 
-This addon created as rethinking of `ember-ref-modifier`, with simplified api and without cons of previous implementation.
+This addon created as rethinking of [ember-ref-modifier](https://github.com/lifeart/ember-ref-modifier), with simplified api and without cons of previous implementation.
 
-See https://github.com/lifeart/ember-ref-modifier/issues/345
+Allow users get acces to DOM nodes inside component, including wrapping & destroying logic.
 
+Simple, use case will look like:
+
+* applying `ref` modifier with passed name to an element. 
+```hbs
+<div {{ref "FavouriteNode"}}>hello</div>
+```
+
+* have access to it inside component class as decorated property. 
+```js
+import Component from '@glimmer/component';
+import { ref } from 'ember-ref-bucket';
+class MyComponent extends Component {
+  @ref("FavouriteNode") node; 
+  // this.node === "<div>hello</div>"`
+}
+```
 
 Compatibility
 ------------------------------------------------------------------------------
@@ -21,10 +37,97 @@ Installation
 ember install ember-ref-bucket
 ```
 
-
 Usage
 ------------------------------------------------------------------------------
 
+## Examples
+
+### Simple player
+
+```hbs
+<audio {{ref "player"}} src="music.mp3"></audio>
+<button {{on "click" this.onPlay}}>Play</button>
+```
+```js
+import Component from '@glimmer/component';
+import { ref } from 'ember-ref-bucket';
+import { action } from '@ember/object';
+
+export class Player extends Component {
+  @ref('player') audioNode;
+  @action onPlay() {
+    this.audioNode.play()
+  }
+}
+
+```
+
+### Link `div` to `node` property.
+
+```hbs
+<div {{ref "field"}} ></div>
+```
+
+```ts
+import Component from '@glimmer/component';
+import { ref } from 'ember-ref-bucket';
+class MyComponent extends Component {
+  @ref("field") node = null;
+}
+```
+
+### Dynamically show `div` content updates
+
+```hbs
+<div {{tracked-ref "field"}}>hello</div>
+
+{{get (tracked-ref-to "field") "textContent"}}
+
+```
+
+### Use `div` as component argument
+
+```hbs
+<div {{ref "field"}}>hello</div>
+
+<SecondComponent @helloNode={{ref-to "field"}} />
+```
+
+### Use `registerNodeDestructor`
+
+This method will be very useful if we want to wrap node into some library and control it's lifecycle.
+
+```hbs
+<div {{ref "field"}}>
+```
+
+```js
+import Component from '@glimmer/component';
+import { ref, registerNodeDestructor } from 'ember-ref-bucket';
+
+class NodeWrapper {
+  constructor(node) {
+    this.node = node;
+  }
+  destroy() {
+    this.node = null;
+  }
+  value() {
+    return this.node.textContent;
+  }
+}
+
+export default class WrappedNodeComponent extends Component {
+  @ref('field', (node) => {
+    const instance = new NodeWrapper(node);
+    registerNodeDestructor(node, () => instance.destroy());
+    return instance;
+  }) node = null;
+  get value() {
+    return this.node?.value();
+  }
+}
+```
 
 ### Modifiers will be transformed according to this table:
 
@@ -100,92 +203,6 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 * `ref` modifier and `ref-to` helper will not work in template-only components (because of no context), you should use `global-ref` and `global-ref-to` instead. Or provide `bucket` param to `ref` modifier / helper.
 
 -----------
-
-## Examples
-
-### Simple player
-
-```hbs
-<audio {{ref "player"}} src="music.mp3"></audio>
-<button {{on "click" this.onPlay}}>Play</button>
-```
-```js
-import { ref } from 'ember-ref-bucket';
-import Component from '@glimmer/component';
-import { action } from '@ember/object';
-
-export class Player extends Component {
-  @ref('player') audioNode;
-  @action onPlay() {
-    this.audioNode.play()
-  }
-}
-
-```
-
-### Link `div` to `node` property.
-
-```hbs
-<div {{ref "field"}} ></div>
-```
-
-```ts
-class Component {
-  @ref("field") node = null;
-}
-```
-
-### Dynamically show `div` content updates
-
-```hbs
-<div {{tracked-ref "field"}}>hello</div>
-
-{{get (tracked-ref-to "field") "textContent"}}
-
-```
-
-### Use `div` as component argument
-
-```hbs
-<div {{ref "field"}}>hello</div>
-
-<SecondComponent @helloNode={{ref-to "field"}} />
-```
-
-### Use `registerNodeDestructor`
-
-This method will be very useful if we want to wrap node into some library and control it's lifecycle.
-
-```hbs
-<div {{ref "field"}}>
-```
-
-```js
-import { ref, registerNodeDestructor } from 'ember-ref-bucket';
-
-class NodeWrapper {
-  constructor(node) {
-    this.node = node;
-  }
-  destroy() {
-    this.node = null;
-  }
-  value() {
-    return this.node.textContent;
-  }
-}
-
-export default class ApplicationController extends Controller {
-  @ref('field', (node) => {
-    const instance = new NodeWrapper(node);
-    registerNodeDestructor(node, () => instance.destroy());
-    return instance;
-  }) node = null;
-  get value() {
-    return this.node?.value();
-  }
-}
-```
 
 Contributing
 ------------------------------------------------------------------------------
