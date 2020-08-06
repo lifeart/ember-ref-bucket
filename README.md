@@ -103,6 +103,26 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 
 ## Examples
 
+### Simple player
+
+```hbs
+<audio {{ref "player"}} src="music.mp3"></audio>
+<button {{on "click" this.onPlay}}>Play</button>
+```
+```js
+import { ref } from 'ember-ref-bucket';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+
+export class Player extends Component {
+  @ref('player') audioNode;
+  @action onPlay() {
+    this.audioNode.play()
+  }
+}
+
+```
+
 ### Link `div` to `node` property.
 
 ```hbs
