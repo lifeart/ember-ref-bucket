@@ -131,24 +131,6 @@ export default class WrappedNodeComponent extends Component {
 }
 ```
 
-### Modifiers will be transformed according to this table:
-
-| Invocation                   | Will be transformed to                      |
-|------------------------------|---------------------------------------------|
-| `{{ref "foo"}}`               | `{{ref "foo" bucket=this}}`                   |
-| `{{tracked-ref "foo"}}`        | `{{ref "foo" bucket=this tracked=true}}`      |
-| `{{global-ref "foo"}} `        | `{{ref "foo" bucket=undefined}}`              |
-| `{{tracked-global-ref "foo"}}` | `{{ref "foo" bucket=undefined tracked=true}}` |
-
-## Helpers will be transformed according to this table:
-
-| Invocation                   | Will be transformed to                      |
-|------------------------------|---------------------------------------------|
-| `{{ref-to "foo"}}`               | `{{ref-to "foo" bucket=this}}`                   |
-| `{{tracked-ref-to "foo"}}`        | `{{ref-to "foo" bucket=this tracked=true}}`      |
-| `{{global-ref-to "foo"}} `        | `{{ref-to "foo" bucket=undefined}}`              |
-| `{{tracked-global-ref-to "foo"}}` | `{{ref-to "foo" bucket=undefined tracked=true}}` |
-
 ## Available decorators:
 
 ```js
@@ -203,6 +185,29 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 ## Template-only components
 
 * `ref` modifier and `ref-to` helper will not work in template-only components (because of no context), you should use `global-ref` and `global-ref-to` instead. Or provide `bucket` param to `ref` modifier / helper.
+
+-----------
+
+_Addon provide only 1 modifier (`ref`) and 1 helper (`ref-to`), other names will be transformed as described in tables:_
+
+### Modifiers will be transformed according to this table:
+
+| Invocation                   | Will be transformed to                      |
+|------------------------------|---------------------------------------------|
+| `{{ref "foo"}}`               | `{{ref "foo" bucket=this}}`                   |
+| `{{tracked-ref "foo"}}`        | `{{ref "foo" bucket=this tracked=true}}`      |
+| `{{global-ref "foo"}} `        | `{{ref "foo" bucket=undefined}}`              |
+| `{{tracked-global-ref "foo"}}` | `{{ref "foo" bucket=undefined tracked=true}}` |
+
+## Helpers will be transformed according to this table:
+
+| Invocation                   | Will be transformed to                      |
+|------------------------------|---------------------------------------------|
+| `{{ref-to "foo"}}`               | `{{ref-to "foo" bucket=this}}`                   |
+| `{{tracked-ref-to "foo"}}`        | `{{ref-to "foo" bucket=this tracked=true}}`      |
+| `{{global-ref-to "foo"}} `        | `{{ref-to "foo" bucket=undefined}}`              |
+| `{{tracked-global-ref-to "foo"}}` | `{{ref-to "foo" bucket=undefined tracked=true}}` |
+
 
 -----------
 
