@@ -19,9 +19,23 @@ import { ref } from 'ember-ref-bucket';
 
 export default class MyComponent extends Component {
   @ref("FavouriteNode") node; 
-  // this.node === "<div>hello</div>"`
+  // this.node === "<div>hello</div>"
 }
 ```
+
+--------
+
+API differences, comparing to `ember-ref-modifier`:
+
+In `ember-ref-modifier` ref modifier accept 2 positional arguments `{{ref this "property"}}`: 
+1. context to set path (`this`)
+2. path to set on context (`"property"`)
+
+In `ember-ref-bucket` ref modifier accept 1 poisitional argument `{{ref "field"}}`:
+1. reference name (`"field"`)
+
+reference name should be passed as argument for `@ref("field")` decorator, to allow it find reference by name.
+
 
 Compatibility
 ------------------------------------------------------------------------------
