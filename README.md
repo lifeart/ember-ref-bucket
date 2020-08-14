@@ -9,7 +9,7 @@ Simple, use case will look like:
 
 * applying `ref` modifier with passed name to an element. 
 ```hbs
-<div {{ref "FavouriteNode"}}>hello</div>
+<div {{create-ref "FavouriteNode"}}>hello</div>
 ```
 
 * have access to it inside component class as decorated property. 
@@ -31,7 +31,7 @@ In `ember-ref-modifier` ref modifier accept 2 positional arguments `{{ref this "
 1. context to set path (`this`)
 2. path to set on context (`"property"`)
 
-In `ember-ref-bucket` ref modifier accept 1 poisitional argument `{{ref "field"}}`:
+In `ember-ref-bucket` ref modifier accept 1 poisitional argument `{{create-ref "field"}}`:
 1. reference name (`"field"`)
 
 reference name should be passed as argument for `@ref("field")` decorator, to allow it find reference by name.
@@ -60,7 +60,7 @@ Usage
 ### Simple player
 
 ```hbs
-<audio {{ref "player"}} src="music.mp3"></audio>
+<audio {{create-ref "player"}} src="music.mp3"></audio>
 <button {{on "click" this.onPlay}}>Play</button>
 ```
 ```js
@@ -80,7 +80,7 @@ export class Player extends Component {
 ### Link `div` to `node` property.
 
 ```hbs
-<div {{ref "field"}} ></div>
+<div {{create-ref "field"}} ></div>
 ```
 
 ```ts
@@ -95,7 +95,7 @@ export default class MyComponent extends Component {
 ### Dynamically show `div` content updates
 
 ```hbs
-<div {{tracked-ref "field"}}>hello</div>
+<div {{create-tracked-ref "field"}}>hello</div>
 
 {{get (tracked-ref-to "field") "textContent"}}
 
@@ -104,7 +104,7 @@ export default class MyComponent extends Component {
 ### Use `div` as component argument
 
 ```hbs
-<div {{ref "field"}}>hello</div>
+<div {{create-ref "field"}}>hello</div>
 
 <SecondComponent @helloNode={{ref-to "field"}} />
 ```
@@ -114,7 +114,7 @@ export default class MyComponent extends Component {
 This method will be very useful if we want to wrap node into some library and control it's lifecycle.
 
 ```hbs
-<div {{ref "field"}}>
+<div {{create-ref "field"}}>
 ```
 
 ```js
@@ -185,7 +185,7 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 
 * If you don't need to rerun tracked chain (for example, you use ref only for some event-based dom access), you should not use tracked ref.
 
-## Definition of `{{tracked-ref}}` modifiers
+## Definition of `{{crate-tracked-ref}}` modifiers
 
 * If you need to watch for node changes (resize, content, attributes), you can use tracked modifier, it will add resize observer and mutation observer into according element and will mark property as "dirty" for any mutation
 
@@ -198,20 +198,20 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 
 ## Template-only components
 
-* `ref` modifier and `ref-to` helper will not work in template-only components (because of no context), you should use `global-ref` and `global-ref-to` instead. Or provide `bucket` param to `ref` modifier / helper.
+* `create-ref` modifier and `ref-to` helper will not work in template-only components (because of no context), you should use `create-global-ref` and `global-ref-to` instead. Or provide `bucket` param to `create-ref` modifier / helper.
 
 -----------
 
-_Addon provide only 1 modifier (`ref`) and 1 helper (`ref-to`), other names will be transformed as described in tables:_
+_Addon provide only 1 modifier (`create-ref`) and 1 helper (`ref-to`), other names will be transformed as described in tables:_
 
 ### Modifiers will be transformed according to this table:
 
 | Invocation                   | Will be transformed to                      |
 |------------------------------|---------------------------------------------|
-| `{{ref "foo"}}`               | `{{ref "foo" bucket=this}}`                   |
-| `{{tracked-ref "foo"}}`        | `{{ref "foo" bucket=this tracked=true}}`      |
-| `{{global-ref "foo"}} `        | `{{ref "foo" bucket=undefined}}`              |
-| `{{tracked-global-ref "foo"}}` | `{{ref "foo" bucket=undefined tracked=true}}` |
+| `{{create-ref "foo"}}`               | `{{create-ref "foo" bucket=this}}`                   |
+| `{{create-tracked-ref "foo"}}`        | `{{create-ref "foo" bucket=this tracked=true}}`      |
+| `{{create-global-ref "foo"}} `        | `{{create-ref "foo" bucket=undefined}}`              |
+| `{{create-tracked-global-ref "foo"}}` | `{{create-ref "foo" bucket=undefined tracked=true}}` |
 
 ## Helpers will be transformed according to this table:
 
