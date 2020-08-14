@@ -4,7 +4,7 @@ import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { ref, globalRef } from 'ember-ref-bucket';
 
-module('Integration | Modifier | ref', function(hooks) {
+module('Integration | Modifier | create-ref', function(hooks) {
   setupRenderingTest(hooks);
 
   // Replace this with your real tests.
@@ -13,7 +13,7 @@ module('Integration | Modifier | ref', function(hooks) {
       @ref('foo') node;
     }
     this.set('ctx', new Item());
-    await render(hbs`<div {{ref "foo" bucket=this.ctx}}>hello</div>`);
+    await render(hbs`<div {{create-ref "foo" bucket=this.ctx}}>hello</div>`);
     assert.equal(this.ctx.node.textContent, 'hello');
   });
 
@@ -23,7 +23,7 @@ module('Integration | Modifier | ref', function(hooks) {
       @globalRef('boo') node;
     }
     this.set('ctx', new Item());
-    await render(hbs`<div {{ref "boo" bucket=undefined}}>octane</div>`);
+    await render(hbs`<div {{create-ref "boo" bucket=undefined}}>octane</div>`);
     assert.equal(this.ctx.node.textContent, 'octane');
   });
 });

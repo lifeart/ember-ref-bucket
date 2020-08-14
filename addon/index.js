@@ -1,9 +1,9 @@
-import { bucketFor, resolveGlobalRef } from "./modifiers/ref";
+import { bucketFor, resolveGlobalRef } from "./utils/ref";
 import { getOwner } from "@ember/application";
 export {
   registerNodeDestructor,
   unregisterNodeDestructor,
-} from "./modifiers/ref";
+} from "./utils/ref";
 
 function maybeReturnCreated(value, createdValues, fn, ctx) {
   if (value === null || value === undefined) {

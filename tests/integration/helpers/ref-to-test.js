@@ -9,7 +9,7 @@ module('Integration | Helper | ref-to', function(hooks) {
   // TODO: Replace this with your real tests.
   test('it renders', async function(assert) {
 
-    await render(hbs`<div {{ref "node"}}>ember</div><span>{{get (ref-to "node") "textContent"}}</span>`);
+    await render(hbs`<div {{create-ref "node"}}>ember</div><span>{{get (ref-to "node") "textContent"}}</span>`);
 
     assert.equal(this.element.querySelector('span').textContent, 'ember');
   });

@@ -1,5 +1,5 @@
 import Helper from '@ember/component/helper';
-import { bucketFor, watchFor } from './../modifiers/ref';
+import { bucketFor, watchFor } from './../utils/ref';
 import { registerDestructor, unregisterDestructor } from '@ember/destroyable';
 import { getOwner } from "@ember/application";
 

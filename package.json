@@ -1,13 +1,14 @@
 {
   "name": "ember-ref-bucket",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "Ember DOM reference modifiers, helpers and decorators",
   "keywords": [
     "ember-addon",
     "ember-modifier",
     "ember-element-modifier",
     "ref-modifier",
-    "ref"
+    "ref",
+    "create-ref"
   ],
   "repository": "lifeart/ember-ref-bucket",
   "license": "MIT",
