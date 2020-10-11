@@ -5,6 +5,11 @@ export {
   unregisterNodeDestructor,
 } from "./utils/ref";
 
+
+export function nodeFor(context, name) {
+  return bucketFor(context).get(name);
+}
+
 function maybeReturnCreated(value, createdValues, fn, ctx) {
   if (value === null || value === undefined) {
     return null;

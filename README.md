@@ -179,6 +179,16 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 
 ```
 
+```js
+/* 
+  nodeFor - functional low-level primitive to get node access
+*/
+
+import { nodeFor } from 'ember-ref-bucket';
+
+const domNode = nodeFor(this, 'field');
+```
+
 ## Definition of `@trackedRef` decorators
 
 * If you use dom node if `@tracked` chain calculations, you should use tracked ref.
