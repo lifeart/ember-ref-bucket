@@ -1,6 +1,5 @@
-import { setGlobalRef, resolveGlobalRef, bucketFor, unregisterNodeDestructor, registerNodeDestructor, getNodeDestructors } from 'ember-ref-bucket/utils/ref';
+import { setGlobalRef, resolveGlobalRef, bucketFor, watchFor, unregisterNodeDestructor, registerNodeDestructor, getNodeDestructors } from 'ember-ref-bucket/utils/ref';
 import { module, test } from 'qunit';
-import { destroy, associateDestroyableChild } from '@ember/destroyable';
 
 module('Unit | Utility | ref', function(hooks) {
 
@@ -49,6 +48,18 @@ module('Unit | Utility | ref', function(hooks) {
     assert.notEqual(sideEffectCheck, null);
     assert.notEqual(resolvedBucket, sideEffectCheck);
     sideEffectCheck = null;
+  });
+
+  test('bucket notifications', function(assert) {
+    assert.expect(1);
+    const ctx = {
+      name: 1
+    };
+    const bucket = bucketFor(ctx);
+    watchFor('name', ctx, () => {
+      assert.ok('called');
+    });
+    bucket.add('name', {});
   });
 
 });
