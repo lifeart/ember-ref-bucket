@@ -1,18 +1,18 @@
 ember-ref-bucket
 ==============================================================================
 
-This addon created as rethinking of [ember-ref-modifier](https://github.com/lifeart/ember-ref-modifier), with simplified api and without cons of previous implementation.
+This addon was created as a rethinking of [ember-ref-modifier](https://github.com/lifeart/ember-ref-modifier), with a more simplified API and without some of the downsides of the previous implementation.
 
-Allow users get acces to DOM nodes inside component, including wrapping & destroying logic.
+The addon allows users to get access to DOM nodes inside components, including accessing wrapping/destroying logic.
 
-Simple, use case will look like:
+A simple use case:
 
 * applying `ref` modifier with passed name to an element. 
 ```hbs
 <div {{create-ref "FavouriteNode"}}>hello</div>
 ```
 
-* have access to it inside component class as decorated property. 
+* gain access to it inside the component class as a decorated property
 ```js
 import Component from '@glimmer/component';
 import { ref } from 'ember-ref-bucket';
@@ -34,7 +34,7 @@ In `ember-ref-modifier` ref modifier accept 2 positional arguments `{{ref this "
 In `ember-ref-bucket` ref modifier accept 1 positional argument `{{create-ref "field"}}`:
 1. reference name (`"field"`)
 
-reference name should be passed as argument for `@ref("field")` decorator, to allow it find reference by name.
+reference name should be passed as an argument to the `@ref("field")` decorator, to allow it to find the reference by name.
 
 
 Compatibility
@@ -111,7 +111,7 @@ export default class MyComponent extends Component {
 
 ### Use `registerNodeDestructor`
 
-This method will be very useful if we want to wrap node into some library and control it's lifecycle.
+This method is very useful if you want to wrap the node and control its lifecycle.
 
 ```hbs
 <div {{create-ref "field"}}>
@@ -191,28 +191,28 @@ const domNode = nodeFor(this, 'field');
 
 ## Definition of `@trackedRef` decorators
 
-* If you use dom node if `@tracked` chain calculations, you should use tracked ref.
+* If you use dom node in `@tracked` chain calculations, you should use `trackedRef`.
 
-* If you don't need to rerun tracked chain (for example, you use ref only for some event-based dom access), you should not use tracked ref.
+* If you don't need to rerun the tracked chain (for example, you use `ref` only for some event-based dom access), you should not use `trackedRef`.
 
-## Definition of `{{crate-tracked-ref}}` modifiers
+## Definition of `{{create-tracked-ref}}` modifiers
 
-* If you need to watch for node changes (resize, content, attributes), you can use tracked modifier, it will add resize observer and mutation observer into according element and will mark property as "dirty" for any mutation
+* If you need to watch for node changes (resize, content, attributes), you can use the `create-tracked-ref` modifier. Tt will add observe resizing and mutations for the associated element and will mark it as "dirty" for any mutation.
 
 
 ## Definition of `{{tracked-ref-to}}` helpers
 
-* If you need to recalculate helper if some dome node changes (size, children, attributes), you need to use `tracked-ref-to` helper.
+* If you need to recalculate helper if some dom node changes (size, children, attributes), you need to use `tracked-ref-to` helper.
 * If you don't need it (you need to just have ref to dom node), you should choose `ref-to` helper.
 
 
 ## Template-only components
 
-* `create-ref` modifier and `ref-to` helper will not work in template-only components (because of no context), you should use `create-global-ref` and `global-ref-to` instead. Or provide `bucket` param to `create-ref` modifier / helper.
+* `create-ref` modifier and `ref-to` helpers will not work in template-only components (because of no context). You should use `create-global-ref` and `global-ref-to` instead. You can also provide a `bucket` param to the `create-ref` modifier / helper.
 
 -----------
 
-_Addon provide only 1 modifier (`create-ref`) and 1 helper (`ref-to`), other names will be transformed as described in tables:_
+_The addon provide only 1 modifier (`create-ref`) and 1 helper (`ref-to`). Other derivatives will be transformed, and are described below:_
 
 ### Modifiers will be transformed according to this table:
 
