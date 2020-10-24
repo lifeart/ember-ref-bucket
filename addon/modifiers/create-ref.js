@@ -3,15 +3,11 @@ import { getOwner } from "@ember/application";
 
 import { action } from "@ember/object";
 import { assert } from "@ember/debug";
-import { setGlobalRef, bucketFor, getNodeDestructors } from "./../utils/ref";
+import { bucketFor, getNodeDestructors } from "./../utils/ref";
 
 export default class RefModifier extends Modifier {
   _key = this.name;
   _ctx = this.ctx;
-  constructor() {
-    super(...arguments);
-    setGlobalRef(getOwner(this));
-  }
   mutationObserverOptions = {
     attributes: true,
     characterData: true,
