@@ -1,4 +1,4 @@
-import { registerDestructor } from "@ember/destroyable";
+import { registerDestructor, isDestroying, isDestroyed } from "@ember/destroyable";
 import { tracked } from "@glimmer/tracking";
 
 let lastGlobalRef = null;
@@ -83,6 +83,13 @@ export function bucketFor(rawCtx) {
   const ctx = rawCtx;
   if (!buckets.has(ctx)) {
     buckets.set(ctx, createBucket());
+    if (isDestroyed(ctx) || isDestroying(ctx)) {
+      try {
+        return buckets.get(ctx);
+      } finally {
+        buckets.delete(ctx);
+      }
+    }
     registerDestructor(ctx, () => {
       buckets.delete(ctx);
     });
