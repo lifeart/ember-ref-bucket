@@ -38,6 +38,12 @@ export default class RefModifier extends Modifier {
     delete opts.resize;
     this._mutationsObserver.observe(this.element, opts);
   }
+  validateTrackedOptions() {
+    const args = ['subtree', 'attributes', 'children', 'resize', 'character'];
+    if (args.some((name)=>name in this.args.named)) {
+      assert(`"ember-ref-modifier", looks like you trying to use {{${this.args.named.debugName}}} without tracked flag or alias, but, with properties, related to tracked modifier (${args.join(', ')})`, this.isTracked);
+    }
+  }
   getObserverOptions() {
     let resize = true;
     let subtree = this.mutationObserverOptions.subtree;
@@ -75,6 +81,7 @@ export default class RefModifier extends Modifier {
       `You must provide string as first positional argument for {{${this.args.named.debugName}}}`,
       typeof this.name === "string" && this.name.length > 0
     );
+    this.validateTrackedOptions();
     this.cleanMutationObservers();
     this.cleanResizeObservers();
     if (this.name !== this._key || this._ctx !== this.ctx) {
