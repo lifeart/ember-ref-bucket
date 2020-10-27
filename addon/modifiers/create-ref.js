@@ -15,8 +15,8 @@ export default class RefModifier extends Modifier {
   mutationObserverOptions = {
     attributes: true,
     characterData: true,
-    childList: true,
-    subtree: true,
+    childList: false,
+    subtree: false,
   };
   @action
   markDirty() {
