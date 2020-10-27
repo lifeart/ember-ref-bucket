@@ -34,7 +34,37 @@ export default class RefModifier extends Modifier {
   }
   installMutationObservers() {
     this._mutationsObserver = new MutationObserver(this.markDirty);
-    this._mutationsObserver.observe(this.element, this.mutationObserverOptions);
+    const opts = this.getObserverOptions();
+    delete opts.resize;
+    this._mutationsObserver.observe(this.element, opts);
+  }
+  getObserverOptions() {
+    let resize = true;
+    let subtree = this.mutationObserverOptions.subtree;
+    let attributes = this.mutationObserverOptions.attributes;
+    let character = this.mutationObserverOptions.characterData;
+    let children = this.mutationObserverOptions.childList;
+    if ('subtree' in this.args.named) {
+      subtree = this.args.named;
+    }
+    if ('attributes' in this.args.named) {
+      attributes = this.args.named.attributes;
+    }
+    if ('children' in this.args.named) {
+      children = this.args.named.children;
+    }
+    if ('resize' in this.args.named) {
+      resize = this.args.named.resize;
+    }
+    if ('character' in this.args.named) {
+      character = this.args.named.character;
+    }
+    return {
+      subtree, attributes,
+      childList: children,
+      resize,
+      characterData: character
+    };
   }
   installResizeObservers() {
     this._resizeObserver = new ResizeObserver(this.markDirty);
@@ -55,7 +85,10 @@ export default class RefModifier extends Modifier {
     bucketFor(this.ctx).add(this.name, this.element);
     if (this.isTracked) {
       this.installMutationObservers();
-      this.installResizeObservers();
+
+      if (this.getObserverOptions().resize) {
+        this.installResizeObservers();
+      }
     }
   }
   get ctx() {
