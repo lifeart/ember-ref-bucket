@@ -55,7 +55,7 @@ export default class RefModifier extends Modifier {
     let character = this.mutationObserverOptions.characterData;
     let children = this.mutationObserverOptions.childList;
     if ('subtree' in this.args.named) {
-      subtree = this.args.named;
+      subtree = this.args.named.subtree;
     }
     if ('attributes' in this.args.named) {
       attributes = this.args.named.attributes;
