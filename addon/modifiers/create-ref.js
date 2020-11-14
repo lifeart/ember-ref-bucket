@@ -36,7 +36,11 @@ export default class RefModifier extends Modifier {
     this._mutationsObserver = new MutationObserver(this.markDirty);
     const opts = this.getObserverOptions();
     delete opts.resize;
-    this._mutationsObserver.observe(this.element, opts);
+    if (opts.attributes || opts.characterData || opts.childList) {
+      // mutations observer throws if observe is attempted
+      // with all these options disabled
+      this._mutationsObserver.observe(this.element, opts);
+    }
   }
   validateTrackedOptions() {
     const args = ['subtree', 'attributes', 'children', 'resize', 'character'];
