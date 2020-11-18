@@ -68,4 +68,27 @@ module('Integration | Modifier | create-ref', function(hooks) {
   });
 
 
+  test('assert stable local ref', async function(assert) {
+    this.set('isToggled', true);
+    await render(hbs`{{#if this.isToggled}}<div {{create-ref "foo"}}>octane</div>{{else}}<div {{create-ref "foo"}}>ember</div>{{/if}}`);
+    assert.equal(nodeFor(this, "foo").textContent, 'octane');
+    this.set('isToggled', false);
+    assert.equal(nodeFor(this, "foo").textContent, 'ember');
+    this.set('isToggled', true);
+    assert.equal(nodeFor(this, "foo").textContent, 'octane');
+    this.set('isToggled', false);
+    assert.equal(nodeFor(this, "foo").textContent, 'ember');
+  });
+
+  test('assert stable global ref', async function(assert) {
+    this.set('isToggled', true);
+    await render(hbs`{{#if this.isToggled}}<div {{create-global-ref "foo"}}>octane</div>{{else}}<div {{create-global-ref "foo"}}>ember</div>{{/if}}`);
+    assert.equal(nodeFor(this.owner, "foo").textContent, 'octane');
+    this.set('isToggled', false);
+    assert.equal(nodeFor(this.owner, "foo").textContent, 'ember');
+    this.set('isToggled', true);
+    assert.equal(nodeFor(this.owner, "foo").textContent, 'octane');
+    this.set('isToggled', false);
+    assert.equal(nodeFor(this.owner, "foo").textContent, 'ember');
+  });
 });

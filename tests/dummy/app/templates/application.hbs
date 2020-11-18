@@ -1,4 +1,4 @@
-<h2 id="title" contenteditable {{create-tracked-ref "foo"}}><span>Welcome to Ember</span></h2>
+<h2 id="title" contenteditable {{create-tracked-ref "foo" subtree=true}}><span>Welcome to Ember</span></h2>
 
 {{#let (tracked-ref-to "foo") as |node|}}
 <br />
