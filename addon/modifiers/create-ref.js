@@ -12,9 +12,11 @@ export default class RefModifier extends Modifier {
     super(...arguments);
     setGlobalRef(getOwner(this));
   }
-  mutationObserverOptions = {
-    attributes: true,
-    characterData: true,
+  // to minimise overhead, user should be specific about
+  // what they want to observe
+  defaultMutationObserverOptions = {
+    attributes: false,
+    characterData: false,
     childList: false,
     subtree: false,
   };
@@ -36,7 +38,11 @@ export default class RefModifier extends Modifier {
     this._mutationsObserver = new MutationObserver(this.markDirty);
     const opts = this.getObserverOptions();
     delete opts.resize;
-    this._mutationsObserver.observe(this.element, opts);
+    if (opts.attributes || opts.characterdata || opts.childlist) {
+      // mutations observer throws if observe is attempted
+      // with all these options disabled
+      this._mutationsObserver.observe(this.element, opts);
+    }
   }
   validateTrackedOptions() {
     const args = ['subtree', 'attributes', 'children', 'resize', 'character'];
@@ -45,13 +51,16 @@ export default class RefModifier extends Modifier {
     }
   }
   getObserverOptions() {
-    let resize = true;
-    let subtree = this.mutationObserverOptions.subtree;
-    let attributes = this.mutationObserverOptions.attributes;
-    let character = this.mutationObserverOptions.characterData;
-    let children = this.mutationObserverOptions.childList;
+    // to minimise overhead user
+    // should be specific about
+    // what they want to observe
+    let resize = false;
+    let subtree = this.defaultMutationObserverOptions.subtree;
+    let attributes = this.defaultMutationObserverOptions.attributes;
+    let character = this.defaultMutationObserverOptions.characterData;
+    let children = this.defaultMutationObserverOptions.childList;
     if ('subtree' in this.args.named) {
-      subtree = this.args.named;
+      subtree = this.args.named.subtree;
     }
     if ('attributes' in this.args.named) {
       attributes = this.args.named.attributes;
