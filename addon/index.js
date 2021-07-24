@@ -42,8 +42,11 @@ export function ref(name, fn) {
 }
 
 export function globalRef(name, fn) {
-  return function () {
+  return function (klass, objectKey) {
     const createdValues = new WeakMap();
+    if (typeof fn === 'function') {
+      addPrototypeReference(klass, objectKey, name);
+    }
     return {
       get() {
         const value = bucketFor(getOwner(this) || resolveGlobalRef()).get(name);
@@ -54,8 +57,11 @@ export function globalRef(name, fn) {
 }
 
 export function trackedRef(name, fn) {
-  return function () {
+  return function (klass, objectKey) {
     const createdValues = new WeakMap();
+    if (typeof fn === 'function') {
+      addPrototypeReference(klass, objectKey, name);
+    }
     return {
       get() {
         const value = bucketFor(this).getTracked(name);
@@ -66,8 +72,11 @@ export function trackedRef(name, fn) {
 }
 
 export function trackedGlobalRef(name, fn) {
-  return function () {
+  return function (klass, objectKey) {
     const createdValues = new WeakMap();
+    if (typeof fn === 'function') {
+      addPrototypeReference(klass, objectKey, name);
+    }
     return {
       get() {
         const value = bucketFor(getOwner(this) || resolveGlobalRef()).getTracked(name);
