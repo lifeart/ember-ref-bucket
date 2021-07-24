@@ -3,8 +3,8 @@ import { getOwner } from "@ember/application";
 
 import { action } from "@ember/object";
 import { assert } from "@ember/debug";
-import { setGlobalRef, bucketFor, getNodeDestructors } from "./../utils/ref";
-
+import { setGlobalRef, bucketFor, getNodeDestructors, watchFor } from "./../utils/ref";
+import { getReferencedKeys } from "../utils/prototype-reference";
 export default class RefModifier extends Modifier {
   _key = this.name;
   _ctx = this.ctx;
@@ -98,6 +98,13 @@ export default class RefModifier extends Modifier {
     }
     this._ctx = this.ctx;
     this._key = this.name;
+    watchFor(this.name, this.ctx, () => {
+      const keys = getReferencedKeys(this.ctx, this.name);
+      keys.forEach((keyName) => {
+        // consume keys with callbacks
+        this.ctx[keyName];
+      })
+    });
     bucketFor(this.ctx).add(this.name, this.element);
     if (this.isTracked) {
       this.installMutationObservers();

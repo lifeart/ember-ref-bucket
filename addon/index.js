@@ -4,7 +4,7 @@ export {
   registerNodeDestructor,
   unregisterNodeDestructor,
 } from "./utils/ref";
-
+import { addPrototypeReference } from "./utils/prototype-reference";
 
 export function nodeFor(context, name) {
   return bucketFor(context).get(name);
@@ -14,7 +14,7 @@ function maybeReturnCreated(value, createdValues, fn, ctx) {
   if (value === null || value === undefined) {
     return null;
   }
-  if (fn) {
+  if (typeof fn === 'function') {
     if (!createdValues.has(value)) {
       createdValues.set(value, fn.call(ctx, value));
     }
@@ -24,9 +24,14 @@ function maybeReturnCreated(value, createdValues, fn, ctx) {
   }
 }
 
+
+
 export function ref(name, fn) {
-  return function () {
+  return function (klass, objectKey) {
     const createdValues = new WeakMap();
+    if (typeof fn === 'function') {
+      addPrototypeReference(klass, objectKey, name);
+    }
     return {
       get() {
         const value = bucketFor(this).get(name);
