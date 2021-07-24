@@ -1,5 +1,5 @@
 import Controller from '@ember/controller';
-import { trackedRef, registerNodeDestructor } from 'ember-ref-bucket';
+import { trackedRef, registerNodeDestructor, ref } from 'ember-ref-bucket';
 
 class NodeWrapper {
   constructor(node) {
@@ -22,4 +22,9 @@ export default class ApplicationController extends Controller {
   get value() {
     return this.node?.value();
   }
+  @ref('bar', function(node) {
+    const instance = new NodeWrapper(node);
+    registerNodeDestructor(node, () => instance.destroy());
+    return instance;
+  }) barNode;
 }
