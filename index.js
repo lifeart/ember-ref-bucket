@@ -15,7 +15,7 @@ module.exports = {
   },
 
   _buildPlugin() {
-    const RefTransform = require('./lib/ref-transform');
+    const RefTransform = new require('./lib/ref-transform');
 
     return {
       name: 'ref-transform',
