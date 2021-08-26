@@ -15,11 +15,11 @@ module.exports = {
   },
 
   _buildPlugin() {
-    const RefTransform = new require('./lib/ref-transform');
+    const RefTransform = require('./lib/ref-transform');
 
     return {
       name: 'ref-transform',
-      plugin: RefTransform,
+      plugin: new RefTransform(),
       baseDir() {
         return __dirname;
       }
