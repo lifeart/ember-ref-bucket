@@ -1,10 +1,7 @@
-import { bucketFor, resolveGlobalRef } from "./utils/ref";
-import { getOwner } from "@ember/application";
-export {
-  registerNodeDestructor,
-  unregisterNodeDestructor,
-} from "./utils/ref";
-import { addPrototypeReference } from "./utils/prototype-reference";
+import { bucketFor, resolveGlobalRef } from './utils/ref';
+import { getOwner } from '@ember/application';
+export { registerNodeDestructor, unregisterNodeDestructor } from './utils/ref';
+import { addPrototypeReference } from './utils/prototype-reference';
 
 export function nodeFor(context, name) {
   return bucketFor(context).get(name);
@@ -23,8 +20,6 @@ function maybeReturnCreated(value, createdValues, fn, ctx) {
     return value;
   }
 }
-
-
 
 export function ref(name, fn) {
   return function (klass, objectKey) {
@@ -79,7 +74,9 @@ export function trackedGlobalRef(name, fn) {
     }
     return {
       get() {
-        const value = bucketFor(getOwner(this) || resolveGlobalRef()).getTracked(name);
+        const value = bucketFor(
+          getOwner(this) || resolveGlobalRef()
+        ).getTracked(name);
         return maybeReturnCreated(value, createdValues, fn, this);
       },
     };
