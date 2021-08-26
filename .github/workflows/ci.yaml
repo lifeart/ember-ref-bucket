@@ -24,9 +24,6 @@
 #$   - scenario: ember-beta
 #$   - scenario: ember-canary
 #$   - scenario: ember-default-with-jquery
-#$   - scenario: typescript-3.6
-#$   - scenario: typescript-3.7
-#$   - scenario: typescript-next
 #$   - scenario: ember-classic
 #$ nodeVersion: 10.x
 #$ packageManager: yarn
@@ -182,9 +179,6 @@ jobs:
           ember-beta,
           ember-canary,
           ember-default-with-jquery,
-          typescript-3.6,
-          typescript-3.7,
-          typescript-next,
           ember-classic
         ]
 
