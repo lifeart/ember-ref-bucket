@@ -15,8 +15,6 @@
 #$ browsers:
 #$   - chrome
 #$ emberTryScenarios:
-#$   - scenario: ember-lts-3.4
-#$   - scenario: ember-lts-3.8
 #$   - scenario: ember-lts-3.12
 #$   - scenario: ember-lts-3.16
 #$   - scenario: ember-lts-3.20
@@ -25,7 +23,7 @@
 #$   - scenario: ember-canary
 #$   - scenario: ember-default-with-jquery
 #$   - scenario: ember-classic
-#$ nodeVersion: 10.x
+#$ nodeVersion: 12.x
 #$ packageManager: yarn
 #
 
@@ -38,7 +36,7 @@ on:
   pull_request:
 
 env:
-  NODE_VERSION: '10.x'
+  NODE_VERSION: '12.x'
 
 jobs:
   lint:
@@ -124,6 +122,7 @@ jobs:
     name: Floating Dependencies
     runs-on: ${{ matrix.os }}
     needs: lint
+    timeout-minutes: 10
 
     strategy:
       matrix:
