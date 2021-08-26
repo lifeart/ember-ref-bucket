@@ -19,7 +19,7 @@ module.exports = {
 
     return {
       name: 'ref-transform',
-      plugin() { return new RefTransform.apply(this, arguments) },
+      plugin: RefTransform,
       baseDir() {
         return __dirname;
       }
