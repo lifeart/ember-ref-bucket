@@ -1,10 +1,15 @@
-import Modifier from "ember-modifier";
-import { getOwner } from "@ember/application";
+import Modifier from 'ember-modifier';
+import { getOwner } from '@ember/application';
 
-import { action } from "@ember/object";
-import { assert } from "@ember/debug";
-import { setGlobalRef, bucketFor, getNodeDestructors, watchFor } from "./../utils/ref";
-import { getReferencedKeys } from "../utils/prototype-reference";
+import { action } from '@ember/object';
+import { assert } from '@ember/debug';
+import {
+  setGlobalRef,
+  bucketFor,
+  getNodeDestructors,
+  watchFor,
+} from './../utils/ref';
+import { getReferencedKeys } from '../utils/prototype-reference';
 export default class RefModifier extends Modifier {
   _key = this.name;
   _ctx = this.ctx;
@@ -46,8 +51,15 @@ export default class RefModifier extends Modifier {
   }
   validateTrackedOptions() {
     const args = ['subtree', 'attributes', 'children', 'resize', 'character'];
-    if (args.some((name)=>name in this.args.named)) {
-      assert(`"ember-ref-modifier", looks like you trying to use {{${this.args.named.debugName}}} without tracked flag or alias, but, with properties, related to tracked modifier (${args.join(', ')})`, this.isTracked);
+    if (args.some((name) => name in this.args.named)) {
+      assert(
+        `"ember-ref-modifier", looks like you trying to use {{${
+          this.args.named.debugName
+        }}} without tracked flag or alias, but, with properties, related to tracked modifier (${args.join(
+          ', '
+        )})`,
+        this.isTracked
+      );
     }
   }
   getObserverOptions() {
@@ -75,10 +87,11 @@ export default class RefModifier extends Modifier {
       character = this.args.named.character;
     }
     return {
-      subtree, attributes,
+      subtree,
+      attributes,
       childList: children,
       resize,
-      characterData: character
+      characterData: character,
     };
   }
   installResizeObservers() {
@@ -88,7 +101,7 @@ export default class RefModifier extends Modifier {
   didReceiveArguments() {
     assert(
       `You must provide string as first positional argument for {{${this.args.named.debugName}}}`,
-      typeof this.name === "string" && this.name.length > 0
+      typeof this.name === 'string' && this.name.length > 0
     );
     this.validateTrackedOptions();
     this.cleanMutationObservers();
@@ -103,7 +116,7 @@ export default class RefModifier extends Modifier {
       keys.forEach((keyName) => {
         // consume keys with callbacks
         this.ctx[keyName];
-      })
+      });
     });
     bucketFor(this.ctx).add(this.name, this.element);
     if (this.isTracked) {

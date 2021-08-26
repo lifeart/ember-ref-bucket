@@ -1,7 +1,7 @@
 import Helper from '@ember/component/helper';
 import { bucketFor, watchFor } from './../utils/ref';
 import { registerDestructor, unregisterDestructor } from '@ember/destroyable';
-import { getOwner } from "@ember/application";
+import { getOwner } from '@ember/application';
 
 export default class RefToHelper extends Helper {
   _watcher = null;

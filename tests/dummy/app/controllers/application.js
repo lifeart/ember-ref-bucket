@@ -18,13 +18,15 @@ export default class ApplicationController extends Controller {
     const instance = new NodeWrapper(node);
     registerNodeDestructor(node, () => instance.destroy());
     return instance;
-  }) node = null;
+  })
+  node = null;
   get value() {
     return this.node?.value();
   }
-  @ref('bar', function(node) {
+  @ref('bar', function (node) {
     const instance = new NodeWrapper(node);
     registerNodeDestructor(node, () => instance.destroy());
     return instance;
-  }) barNode;
+  })
+  barNode;
 }

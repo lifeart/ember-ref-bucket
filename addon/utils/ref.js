@@ -1,5 +1,9 @@
-import { registerDestructor, isDestroying, isDestroyed } from "@ember/destroyable";
-import { tracked } from "@glimmer/tracking";
+import {
+  registerDestructor,
+  isDestroying,
+  isDestroyed,
+} from '@ember/destroyable';
+import { tracked } from '@glimmer/tracking';
 
 let lastGlobalRef = null;
 const buckets = new WeakMap();
