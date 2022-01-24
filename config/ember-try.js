@@ -60,8 +60,20 @@ module.exports = async function () {
           },
         },
       },
-      embroiderSafe(),
-      embroiderOptimized(),
+      embroiderSafe({
+        npm: {
+          dependencies: {
+            qunit: '^2.17.0',
+          },
+        },
+      }),
+      embroiderOptimized({
+        npm: {
+          dependencies: {
+            qunit: '^2.17.0',
+          },
+        },
+      }),
     ],
   };
 };
