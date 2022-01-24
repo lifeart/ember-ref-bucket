@@ -248,6 +248,12 @@ Contributing
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
 
+Version matrix:
+
+Ember 3.28 - v4;
+Ember 3.24 - v3
+
+
 License
 ------------------------------------------------------------------------------
 

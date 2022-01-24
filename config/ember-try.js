@@ -8,18 +8,10 @@ module.exports = async function () {
     useYarn: true,
     scenarios: [
       {
-        name: 'ember-lts-3.20',
+        name: 'ember-lts-3.28',
         npm: {
           devDependencies: {
-            'ember-source': '~3.20.5',
-          },
-        },
-      },
-      {
-        name: 'ember-lts-3.24',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.24.3',
+            'ember-source': '~3.28.8',
           },
         },
       },
@@ -28,6 +20,8 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('release'),
+            'ember-auto-import': '~2.4.0',
+            webpack: '~5.67.0',
           },
         },
       },
@@ -36,6 +30,8 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('beta'),
+            'ember-auto-import': '~2.4.0',
+            webpack: '~5.67.0',
           },
         },
       },
@@ -44,19 +40,8 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('canary'),
-          },
-        },
-      },
-      {
-        name: 'ember-default-with-jquery',
-        env: {
-          EMBER_OPTIONAL_FEATURES: JSON.stringify({
-            'jquery-integration': true,
-          }),
-        },
-        npm: {
-          devDependencies: {
-            '@ember/jquery': '^1.1.0',
+            'ember-auto-import': '~2.4.0',
+            webpack: '~5.67.0',
           },
         },
       },
@@ -75,8 +60,20 @@ module.exports = async function () {
           },
         },
       },
-      embroiderSafe(),
-      embroiderOptimized(),
+      embroiderSafe({
+        npm: {
+          dependencies: {
+            'ember-auto-import': '~2.4.0',
+          },
+        },
+      }),
+      embroiderOptimized({
+        npm: {
+          dependencies: {
+            'ember-auto-import': '~2.4.0',
+          },
+        },
+      }),
     ],
   };
 };
