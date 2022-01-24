@@ -63,14 +63,14 @@ module.exports = async function () {
       embroiderSafe({
         npm: {
           dependencies: {
-            qunit: '^2.17.0',
+            'ember-auto-import': '~2.4.0',
           },
         },
       }),
       embroiderOptimized({
         npm: {
           dependencies: {
-            qunit: '^2.17.0',
+            'ember-auto-import': '~2.4.0',
           },
         },
       }),
