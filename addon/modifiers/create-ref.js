@@ -10,12 +10,22 @@ import {
   watchFor,
 } from './../utils/ref';
 import { getReferencedKeys } from '../utils/prototype-reference';
+import { registerDestructor } from '@ember/destroyable';
+
 export default class RefModifier extends Modifier {
-  _key = this.name;
-  _ctx = this.ctx;
+  _key;
+  _ctx;
+  _element;
+
   constructor() {
     super(...arguments);
     setGlobalRef(getOwner(this));
+
+    registerDestructor(this, () => {
+      this.cleanMutationObservers();
+      this.cleanResizeObservers();
+      getNodeDestructors(this._element).forEach((cb) => cb());
+    });
   }
   // to minimise overhead, user should be specific about
   // what they want to observe
@@ -25,6 +35,7 @@ export default class RefModifier extends Modifier {
     childList: false,
     subtree: false,
   };
+
   @action
   markDirty() {
     bucketFor(this._ctx).dirtyTrackedCell(this._key);
@@ -39,9 +50,9 @@ export default class RefModifier extends Modifier {
       this._resizeObserver.unobserve(this.element);
     }
   }
-  installMutationObservers() {
+  installMutationObservers(named = {}) {
     this._mutationsObserver = new MutationObserver(this.markDirty);
-    const opts = this.getObserverOptions();
+    const opts = this.getObserverOptions(named);
     delete opts.resize;
     if (opts.attributes || opts.characterdata || opts.childlist) {
       // mutations observer throws if observe is attempted
@@ -49,20 +60,21 @@ export default class RefModifier extends Modifier {
       this._mutationsObserver.observe(this.element, opts);
     }
   }
-  validateTrackedOptions() {
+  validateTrackedOptions(named = {}) {
     const args = ['subtree', 'attributes', 'children', 'resize', 'character'];
-    if (args.some((name) => name in this.args.named)) {
+
+    if (args.some((name) => name in named)) {
       assert(
         `"ember-ref-modifier", looks like you trying to use {{${
-          this.args.named.debugName
+          named.debugName
         }}} without tracked flag or alias, but, with properties, related to tracked modifier (${args.join(
           ', '
         )})`,
-        this.isTracked
+        this.isTracked(named)
       );
     }
   }
-  getObserverOptions() {
+  getObserverOptions(named = {}) {
     // to minimise overhead user
     // should be specific about
     // what they want to observe
@@ -71,20 +83,20 @@ export default class RefModifier extends Modifier {
     let attributes = this.defaultMutationObserverOptions.attributes;
     let character = this.defaultMutationObserverOptions.characterData;
     let children = this.defaultMutationObserverOptions.childList;
-    if ('subtree' in this.args.named) {
-      subtree = this.args.named.subtree;
+    if ('subtree' in named) {
+      subtree = named.subtree;
     }
-    if ('attributes' in this.args.named) {
-      attributes = this.args.named.attributes;
+    if ('attributes' in named) {
+      attributes = named.attributes;
     }
-    if ('children' in this.args.named) {
-      children = this.args.named.children;
+    if ('children' in named) {
+      children = named.children;
     }
-    if ('resize' in this.args.named) {
-      resize = this.args.named.resize;
+    if ('resize' in named) {
+      resize = named.resize;
     }
-    if ('character' in this.args.named) {
-      character = this.args.named.character;
+    if ('character' in named) {
+      character = named.character;
     }
     return {
       subtree,
@@ -94,56 +106,57 @@ export default class RefModifier extends Modifier {
       characterData: character,
     };
   }
-  installResizeObservers() {
+  installResizeObservers(element) {
     this._resizeObserver = new ResizeObserver(this.markDirty);
-    this._resizeObserver.observe(this.element);
+    this._resizeObserver.observe(element);
   }
-  didReceiveArguments() {
+  modify(element, positional, named) {
+    const name = this.name(positional);
+    const ctx = this.ctx(named, positional);
+    this._key = name;
+    this._ctx = ctx;
+    this._element = element;
+
     assert(
-      `You must provide string as first positional argument for {{${this.args.named.debugName}}}`,
-      typeof this.name === 'string' && this.name.length > 0
+      `You must provide string as first positional argument for {{${named.debugName}}}`,
+      typeof name === 'string' && name.length > 0
     );
-    this.validateTrackedOptions();
+    this.validateTrackedOptions(named);
     this.cleanMutationObservers();
     this.cleanResizeObservers();
-    if (this.name !== this._key || this._ctx !== this.ctx) {
+    if (name !== this._key || this._ctx !== ctx) {
       bucketFor(this._ctx).add(this._key, null);
     }
-    this._ctx = this.ctx;
-    this._key = this.name;
-    watchFor(this.name, this.ctx, () => {
-      const keys = getReferencedKeys(this.ctx, this.name);
+
+    watchFor(name, ctx, () => {
+      const keys = getReferencedKeys(ctx, name);
       keys.forEach((keyName) => {
         // consume keys with callbacks
-        this.ctx[keyName];
+        ctx[keyName];
       });
     });
-    bucketFor(this.ctx).add(this.name, this.element);
-    if (this.isTracked) {
-      this.installMutationObservers();
+    bucketFor(ctx).add(name, element);
+    if (this.isTracked(named)) {
+      this.installMutationObservers(named);
 
-      if (this.getObserverOptions().resize) {
-        this.installResizeObservers();
+      if (this.getObserverOptions(named).resize) {
+        this.installResizeObservers(element);
       }
     }
   }
-  get ctx() {
+
+  ctx(named = {}, positional = [undefined]) {
     assert(
-      `ember-ref-bucket: You trying to use {{${this.args.named.debugName}}} as local reference for template-only component. Replace it to {{global-ref "${this.args.positional[0]}"}}`,
-      this.args.named.bucket !== null
+      `ember-ref-bucket: You trying to use {{${named.debugName}}} as local reference for template-only component. Replace it to {{global-ref "${positional[0]}"}}`,
+      named.bucket !== null
     );
 
-    return this.args.named.bucket || getOwner(this);
+    return named.bucket || getOwner(this);
   }
-  get isTracked() {
-    return this.args.named.tracked || false;
+  isTracked(named = {}) {
+    return named.tracked || false;
   }
-  get name() {
-    return this.args.positional[0];
-  }
-  willDestroy() {
-    this.cleanMutationObservers();
-    this.cleanResizeObservers();
-    getNodeDestructors(this.element).forEach((cb) => cb());
+  name(positional) {
+    return positional[0];
   }
 }
