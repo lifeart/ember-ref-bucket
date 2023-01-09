@@ -250,6 +250,7 @@ See the [Contributing](CONTRIBUTING.md) guide for details.
 
 Version matrix:
 
+Ember-Modifier 4 - v5;
 Ember 3.28 - v4;
 Ember 3.24 - v3
 
