@@ -1,6 +1,6 @@
 {
   "name": "ember-ref-bucket",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Ember DOM reference modifiers, helpers and decorators",
   "keywords": [
     "ember-addon",
