@@ -2,10 +2,18 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, find, waitUntil } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
-import { ref, globalRef, nodeFor } from 'ember-ref-bucket';
+import { ref, globalRef, nodeFor, resolveGlobalRef } from 'ember-ref-bucket';
 
 module('Integration | Modifier | create-ref', function (hooks) {
   setupRenderingTest(hooks);
+
+  hooks.after(function (assert) {
+    assert.equal(
+      resolveGlobalRef(),
+      null,
+      'global ref is cleared after all tests done'
+    );
+  });
 
   // Replace this with your real tests.
   test('it renders', async function (assert) {
@@ -127,5 +135,30 @@ module('Integration | Modifier | create-ref', function (hooks) {
     assert.equal(nodeFor(this.owner, 'foo').textContent, 'octane');
     this.set('isToggled', false);
     assert.equal(nodeFor(this.owner, 'foo').textContent, 'ember');
+  });
+
+  test('it keeps proper reference to lastGlobalRef', async function (assert) {
+    this.set('isHidden', false);
+    await render(
+      hbs`<div {{create-global-ref "foo"}}>stable</div>{{#if this.isHidden}}<div {{create-global-ref "bar"}}>unstable</div>{{/if}}`
+    );
+    assert.equal(nodeFor(this.owner, 'foo').textContent, 'stable');
+    assert.notOk(nodeFor(this.owner, 'bar'), 'ref to "bar" does NOT exist');
+    assert.equal(
+      nodeFor(resolveGlobalRef(), 'foo').outerHTML,
+      '<div>stable</div>'
+    );
+
+    this.set('isHidden', true);
+    assert.equal(nodeFor(this.owner, 'foo').textContent, 'stable');
+    assert.equal(nodeFor(this.owner, 'bar').textContent, 'unstable');
+    assert.equal(
+      nodeFor(resolveGlobalRef(), 'foo').outerHTML,
+      '<div>stable</div>'
+    );
+    assert.equal(
+      nodeFor(resolveGlobalRef(), 'bar').outerHTML,
+      '<div>unstable</div>'
+    );
   });
 });
