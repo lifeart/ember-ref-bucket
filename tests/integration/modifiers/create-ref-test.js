@@ -47,7 +47,7 @@ module('Integration | Modifier | create-ref', function (hooks) {
     assert.equal(nodeFor(this, 'foo').textContent, 'octane');
     assert.equal(find('[data-test-mirror]').textContent, 'octane');
     this.set('text', 'polaris');
-    waitUntil(() => find('[data-test-mirror]').textContent === 'polaris');
+    await waitUntil(() => find('[data-test-mirror]').textContent === 'polaris');
     assert.ok(true);
   });
 
