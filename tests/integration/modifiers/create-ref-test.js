@@ -37,6 +37,13 @@ module('Integration | Modifier | create-ref', function (hooks) {
     assert.equal(nodeFor(this, 'foo').textContent, 'octane');
   });
 
+  test('it has proper transform for {{create-tracked-ref resize=true attributes=true}} case', async function (assert) {
+    await render(
+      hbs`<div {{create-tracked-ref "foo" attributes=true}}>octane</div>`
+    );
+    assert.equal(nodeFor(this, 'foo').textContent, 'octane');
+  });
+
   test('it has proper transform for {{create-global-ref}} case', async function (assert) {
     await render(hbs`<div {{create-global-ref "foo"}}>octane</div>`);
     assert.equal(nodeFor(this.owner, 'foo').textContent, 'octane');
