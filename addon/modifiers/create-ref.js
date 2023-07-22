@@ -57,7 +57,7 @@ export default class RefModifier extends Modifier {
     if (
       opts.attributes ||
       opts.characterData ||
-      opts.childlist ||
+      opts.childList ||
       opts.subtree
     ) {
       // mutations observer throws if observe is attempted
