@@ -202,8 +202,8 @@ const domNode = nodeFor(this, 'field');
 Options:
 * `resize` - default: `false`, if truthy observes the resizing of the DOM element.
 * `attributes` - default: `false`, if truthy observes the changing of any attribute on the DOM element.
-* `characterdata` - default: `false`, if truthy observes the change of the innerText of the DOM element. Note that setting innerText can change the childlist or the characterdata depending on the current content of the element.
-* `childlist` - default: `false`, if truthy observes changes to the list of direct children of the DOM element.
+* `character` - default: `false`, if truthy observes the change of the innerText of the DOM element. Note that setting innerText can change the children or the character depending on the current content of the element.
+* `children` - default: `false`, if truthy observes changes to the list of direct children of the DOM element.
 * `subtree` - default: `false`, if truthy observes the above options on the entire DOM subtree, not just the element decorated by the modifier.
 
 

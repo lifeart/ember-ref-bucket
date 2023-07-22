@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render } from '@ember/test-helpers';
+import { render, find, waitUntil } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { ref, globalRef, nodeFor } from 'ember-ref-bucket';
 
@@ -37,11 +37,18 @@ module('Integration | Modifier | create-ref', function (hooks) {
     assert.equal(nodeFor(this, 'foo').textContent, 'octane');
   });
 
-  test('it has proper transform for {{create-tracked-ref resize=true attributes=true}} case', async function (assert) {
-    await render(
-      hbs`<div {{create-tracked-ref "foo" attributes=true}}>octane</div>`
-    );
+  test('it has proper transform for {{create-tracked-ref character=true subtree=true}} case', async function (assert) {
+    assert.expect(3);
+    this.set('text', 'octane');
+    await render(hbs`
+      <div {{create-tracked-ref "foo" character=true subtree=true}}>{{this.text}}</div>
+      <div data-test-mirror>{{get (tracked-ref-to "foo") 'textContent'}}</div>
+    `);
     assert.equal(nodeFor(this, 'foo').textContent, 'octane');
+    assert.equal(find('[data-test-mirror]').textContent, 'octane');
+    this.set('text', 'polaris');
+    waitUntil(() => find('[data-test-mirror]').textContent === 'polaris');
+    assert.ok(true);
   });
 
   test('it has proper transform for {{create-global-ref}} case', async function (assert) {
