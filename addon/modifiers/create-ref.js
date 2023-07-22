@@ -47,7 +47,7 @@ export default class RefModifier extends Modifier {
   }
   cleanResizeObservers() {
     if (this._resizeObserver) {
-      this._resizeObserver.unobserve(this.element);
+      this._resizeObserver.unobserve(this._element);
     }
   }
   installMutationObservers(named = {}) {
@@ -57,7 +57,7 @@ export default class RefModifier extends Modifier {
     if (opts.attributes || opts.characterdata || opts.childlist) {
       // mutations observer throws if observe is attempted
       // with all these options disabled
-      this._mutationsObserver.observe(this.element, opts);
+      this._mutationsObserver.observe(this._element, opts);
     }
   }
   validateTrackedOptions(named = {}) {
