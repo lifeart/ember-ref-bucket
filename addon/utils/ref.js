@@ -17,12 +17,6 @@ export function setGlobalRef(value) {
   lastGlobalRef = value;
 }
 
-export function maybeCleanGlobalRef(value) {
-  if (lastGlobalRef === value) {
-    cleanGlobalRef();
-  }
-}
-
 export function cleanGlobalRef() {
   lastGlobalRef = null;
 }

@@ -4,7 +4,6 @@ import { getOwner } from '@ember/application';
 import { action } from '@ember/object';
 import { assert } from '@ember/debug';
 import {
-  maybeCleanGlobalRef,
   setGlobalRef,
   bucketFor,
   getNodeDestructors,
@@ -23,7 +22,6 @@ export default class RefModifier extends Modifier {
     setGlobalRef(getOwner(this));
 
     registerDestructor(this, () => {
-      maybeCleanGlobalRef(getOwner(this));
       this.cleanMutationObservers();
       this.cleanResizeObservers();
       getNodeDestructors(this._element).forEach((cb) => cb());
