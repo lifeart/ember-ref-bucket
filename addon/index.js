@@ -7,6 +7,8 @@ export function nodeFor(context, name) {
   return bucketFor(context).get(name);
 }
 
+export { resolveGlobalRef };
+
 function maybeReturnCreated(value, createdValues, fn, ctx) {
   if (value === null || value === undefined) {
     return null;
