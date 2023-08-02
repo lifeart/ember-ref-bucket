@@ -17,6 +17,10 @@ export function setGlobalRef(value) {
   lastGlobalRef = value;
 }
 
+export function cleanGlobalRef() {
+  lastGlobalRef = null;
+}
+
 export function resolveGlobalRef() {
   return lastGlobalRef;
 }
