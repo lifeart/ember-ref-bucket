@@ -1,0 +1,10 @@
+<div>
+  <button type="button" class="add-items p-2 ml-2" {{on "click" this.addItems}}>Add 100 items</button>
+  <button type="button" class="clear p-2 ml-2" {{on "click" this.clear}}>Clear</button>
+</div>
+
+{{#each this.items as |item|}}
+  <div {{create-ref (concat "item-" item) bucket=this}}>
+    {{item}}
+  </div>
+{{/each}}

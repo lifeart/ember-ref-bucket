@@ -22,9 +22,14 @@ export default class RefModifier extends Modifier {
     setGlobalRef(getOwner(this));
 
     registerDestructor(this, () => {
+      const element = this._element;
       this.cleanMutationObservers();
       this.cleanResizeObservers();
-      getNodeDestructors(this._element).forEach((cb) => cb());
+      getNodeDestructors(element).forEach((cb) => cb());
+      if (element === bucketFor(this._ctx).get(this._key)) {
+        bucketFor(this._ctx).add(this._key, null);
+      }
+      delete this._element;
     });
   }
   // to minimise overhead, user should be specific about
