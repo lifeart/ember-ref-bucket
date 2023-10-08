@@ -129,8 +129,13 @@ export default class RefModifier extends Modifier {
     return this.args.positional[0];
   }
   willDestroy() {
+    const element = this.element;
     this.cleanMutationObservers();
     this.cleanResizeObservers();
-    getNodeDestructors(this.element).forEach((cb) => cb());
+    getNodeDestructors(element).forEach((cb) => cb());
+    if (element === bucketFor(this._ctx).get(this._key)) {
+      bucketFor(this._ctx).add(this._key, null);
+    }
+    delete this.element;
   }
 }

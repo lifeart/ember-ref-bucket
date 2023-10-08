@@ -37,6 +37,7 @@ export function ref(name, fn) {
         const value = bucketFor(this).get(name);
         return maybeReturnCreated(value, createdValues, fn, this);
       },
+      configurable: true,
     };
   };
 }
@@ -52,6 +53,7 @@ export function globalRef(name, fn) {
         const value = bucketFor(getOwner(this) || resolveGlobalRef()).get(name);
         return maybeReturnCreated(value, createdValues, fn, this);
       },
+      configurable: true,
     };
   };
 }
@@ -67,6 +69,7 @@ export function trackedRef(name, fn) {
         const value = bucketFor(this).getTracked(name);
         return maybeReturnCreated(value, createdValues, fn, this);
       },
+      configurable: true,
     };
   };
 }
@@ -82,6 +85,7 @@ export function trackedGlobalRef(name, fn) {
         const value = bucketFor(getOwner(this) || resolveGlobalRef()).getTracked(name);
         return maybeReturnCreated(value, createdValues, fn, this);
       },
+      configurable: true,
     };
   };
 }
