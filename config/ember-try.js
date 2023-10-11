@@ -23,6 +23,9 @@ module.exports = async function () {
             'ember-auto-import': '~2.4.0',
             webpack: '~5.67.0',
           },
+          dependencies: {
+            '@ember/string': '3.1.1',
+          },
         },
       },
       {
@@ -33,6 +36,9 @@ module.exports = async function () {
             'ember-auto-import': '~2.4.0',
             webpack: '~5.67.0',
           },
+          dependencies: {
+            '@ember/string': '3.1.1',
+          },
         },
       },
       {
@@ -42,6 +48,9 @@ module.exports = async function () {
             'ember-source': await getChannelURL('canary'),
             'ember-auto-import': '~2.4.0',
             webpack: '~5.67.0',
+          },
+          dependencies: {
+            '@ember/string': '3.1.1',
           },
         },
       },
