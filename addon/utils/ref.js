@@ -32,17 +32,19 @@ function fromWeakRefIfSupported(node) {
 
 /**
  *
- * @param {null | undefined | WeeakRef | HTMLElement } node
+ * @param {null | undefined | WeakRef | HTMLElement } node
  * @returns
  */
 function toWeakRefIfSupported(node) {
   if (node === null || node === undefined) {
     return null;
   }
-  if (node instanceof WeakRef) {
-    return node;
-  }
-  if (hasWeakRef) {
+  if(hasWeakRef)
+  {
+    if (node instanceof WeakRef) {
+      return node;
+    }
+
     return new WeakRef(node);
   }
   return node;
