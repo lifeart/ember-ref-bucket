@@ -39,8 +39,7 @@ function toWeakRefIfSupported(node) {
   if (node === null || node === undefined) {
     return null;
   }
-  if(hasWeakRef)
-  {
+  if (hasWeakRef) {
     if (node instanceof WeakRef) {
       return node;
     }
