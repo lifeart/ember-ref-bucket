@@ -2,7 +2,7 @@ import Modifier from 'ember-modifier';
 import { getOwner } from '@ember/application';
 
 import { action } from '@ember/object';
-import { assert } from '@ember/debug';
+import { assert, warn } from '@ember/debug';
 import {
   setGlobalRef,
   bucketFor,
@@ -127,6 +127,11 @@ export default class RefModifier extends Modifier {
     this._ctx = ctx;
     this._element = element;
 
+    warn(
+      `Preprocessor was not executed on create-ref modifier. If the reference is not set, check that ember-ref-bucket is included in the dependencies (not devDependencies) in package.json.`,
+      typeof named.debugName === 'string' || !!named.bucket,
+      { id: 'ember-ref-bucket.no-preprocessor' }
+    );
     assert(
       `You must provide string as first positional argument for {{${named.debugName}}}`,
       typeof name === 'string' && name.length > 0
