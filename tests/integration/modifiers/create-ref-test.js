@@ -45,6 +45,13 @@ module('Integration | Modifier | create-ref', function (hooks) {
     assert.equal(nodeFor(this, 'foo').textContent, 'octane');
   });
 
+  test('it does not throw when subtree=true is used without other mutation observer options', async function (assert) {
+    await render(
+      hbs`<div {{create-tracked-ref "foo" subtree=true}}>hello</div>`
+    );
+    assert.equal(nodeFor(this, 'foo').textContent, 'hello');
+  });
+
   test('it has proper transform for {{create-tracked-ref character=true subtree=true}} case', async function (assert) {
     assert.expect(3);
     this.set('text', 'octane');
