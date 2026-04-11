@@ -7,9 +7,9 @@ The addon allows users to get access to DOM nodes inside components, including a
 
 A simple use case:
 
-* applying `ref` modifier with passed name to an element. 
+* applying `ref` modifier with passed name and context to an element.
 ```hbs
-<div {{create-ref "FavouriteNode"}}>hello</div>
+<div {{create-ref "FavouriteNode" this}}>hello</div>
 ```
 
 * gain access to it inside the component class as a decorated property
@@ -18,7 +18,7 @@ import Component from '@glimmer/component';
 import { ref } from 'ember-ref-bucket';
 
 export default class MyComponent extends Component {
-  @ref("FavouriteNode") node; 
+  @ref("FavouriteNode") node;
   // this.node === "<div>hello</div>"
 }
 ```
@@ -27,12 +27,13 @@ export default class MyComponent extends Component {
 
 API differences, comparing to `ember-ref-modifier`:
 
-In `ember-ref-modifier` ref modifier accept 2 positional arguments `{{ref this "property"}}`: 
+In `ember-ref-modifier` ref modifier accept 2 positional arguments `{{ref this "property"}}`:
 1. context to set path (`this`)
 2. path to set on context (`"property"`)
 
-In `ember-ref-bucket` ref modifier accept 1 positional argument `{{create-ref "field"}}`:
+In `ember-ref-bucket` ref modifier accept 2 positional arguments `{{create-ref "field" this}}`:
 1. reference name (`"field"`)
+2. context (`this`)
 
 reference name should be passed as an argument to the `@ref("field")` decorator, to allow it to find the reference by name.
 
@@ -60,7 +61,7 @@ Usage
 ### Simple player
 
 ```hbs
-<audio {{create-ref "player"}} src="music.mp3"></audio>
+<audio {{create-ref "player" this}} src="music.mp3"></audio>
 <button {{on "click" this.onPlay}}>Play</button>
 ```
 ```js
@@ -80,7 +81,7 @@ export class Player extends Component {
 ### Link `div` to `node` property.
 
 ```hbs
-<div {{create-ref "field"}} ></div>
+<div {{create-ref "field" this}}></div>
 ```
 
 ```ts
@@ -95,18 +96,18 @@ export default class MyComponent extends Component {
 ### Dynamically show `div` content updates
 
 ```hbs
-<div {{create-tracked-ref "field"}}>hello</div>
+<div {{create-tracked-ref "field" this}}>hello</div>
 
-{{get (tracked-ref-to "field") "textContent"}}
+{{get (tracked-ref-to "field" this) "textContent"}}
 
 ```
 
 ### Use `div` as component argument
 
 ```hbs
-<div {{create-ref "field"}}>hello</div>
+<div {{create-ref "field" this}}>hello</div>
 
-<SecondComponent @helloNode={{ref-to "field"}} />
+<SecondComponent @helloNode={{ref-to "field" this}} />
 ```
 
 ### Use `registerNodeDestructor`
@@ -114,7 +115,7 @@ export default class MyComponent extends Component {
 This method is very useful if you want to wrap the node and control its lifecycle.
 
 ```hbs
-<div {{create-ref "field"}}>
+<div {{create-ref "field" this}}>
 ```
 
 ```js
@@ -145,6 +146,19 @@ export default class WrappedNodeComponent extends Component {
 }
 ```
 
+## Available modifiers and helpers
+
+| Invocation | Scope | Tracked |
+|---|---|---|
+| `{{create-ref "foo" this}}` | local | no |
+| `{{create-tracked-ref "foo" this}}` | local | yes |
+| `{{create-global-ref "foo"}}` | global | no |
+| `{{create-tracked-global-ref "foo"}}` | global | yes |
+| `{{ref-to "foo" this}}` | local | no |
+| `{{tracked-ref-to "foo" this}}` | local | yes |
+| `{{global-ref-to "foo"}}` | global | no |
+| `{{tracked-global-ref-to "foo"}}` | global | yes |
+
 ## Available decorators:
 
 ```js
@@ -166,7 +180,7 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 
 /*
   registerNodeDestructor(node, fn) - to assign any ref-node destructor
-  unregisterNodeDestructor(node, fn) - to remove assigned ref-node destructor 
+  unregisterNodeDestructor(node, fn) - to remove assigned ref-node destructor
 
   usage will be like:
 
@@ -180,7 +194,7 @@ import { registerNodeDestructor, unregisterNodeDestructor } from 'ember-ref-buck
 ```
 
 ```js
-/* 
+/*
   nodeFor - functional low-level primitive to get node access
 */
 
@@ -215,30 +229,7 @@ Options:
 
 ## Template-only components
 
-* `create-ref` modifier and `ref-to` helpers will not work in template-only components (because of no context). You should use `create-global-ref` and `global-ref-to` instead. You can also provide a `bucket` param to the `create-ref` modifier / helper.
-
------------
-
-_The addon provide only 1 modifier (`create-ref`) and 1 helper (`ref-to`). Other derivatives will be transformed, and are described below:_
-
-### Modifiers will be transformed according to this table:
-
-| Invocation                   | Will be transformed to                      |
-|------------------------------|---------------------------------------------|
-| `{{create-ref "foo"}}`               | `{{create-ref "foo" bucket=this}}`                   |
-| `{{create-tracked-ref "foo"}}`        | `{{create-ref "foo" bucket=this tracked=true}}`      |
-| `{{create-global-ref "foo"}} `        | `{{create-ref "foo" bucket=undefined}}`              |
-| `{{create-tracked-global-ref "foo"}}` | `{{create-ref "foo" bucket=undefined tracked=true}}` |
-
-## Helpers will be transformed according to this table:
-
-| Invocation                   | Will be transformed to                      |
-|------------------------------|---------------------------------------------|
-| `{{ref-to "foo"}}`               | `{{ref-to "foo" bucket=this}}`                   |
-| `{{tracked-ref-to "foo"}}`        | `{{ref-to "foo" bucket=this tracked=true}}`      |
-| `{{global-ref-to "foo"}} `        | `{{ref-to "foo" bucket=undefined}}`              |
-| `{{tracked-global-ref-to "foo"}}` | `{{ref-to "foo" bucket=undefined tracked=true}}` |
-
+`create-ref` and `ref-to` require a component context (`this`). In template-only components there is no context, so use the global variants instead: `create-global-ref` and `global-ref-to`.
 
 -----------
 
