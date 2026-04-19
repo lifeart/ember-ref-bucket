@@ -16,6 +16,10 @@ const MODERN_DEV_OVERRIDES = {
   'ember-auto-import': '^2.10.0',
   '@ember/test-helpers': '^5.4.1',
   'ember-qunit': '^9.0.4',
+  // @ember/optional-features@2 doesn't know about `use-ember-modules`; 3 does,
+  // which lets us opt into ES modules and silences the using-amd-bundles
+  // deprecation that ember-source 6+ raises as an error in tests.
+  '@ember/optional-features': '^3.0.0',
   webpack: '^5.0.0',
 };
 // `ember-cli-htmlbars` is a runtime dependency of this addon, so scenario
@@ -102,6 +106,7 @@ module.exports = async function () {
             'ember-resolver': '^13.0.0',
             '@ember/test-helpers': '^5.4.1',
             'ember-qunit': '^9.0.4',
+            '@ember/optional-features': '^3.0.0',
           },
           dependencies: {
             'ember-auto-import': '^2.10.0',
@@ -116,6 +121,7 @@ module.exports = async function () {
             'ember-resolver': '^13.0.0',
             '@ember/test-helpers': '^5.4.1',
             'ember-qunit': '^9.0.4',
+            '@ember/optional-features': '^3.0.0',
           },
           dependencies: {
             'ember-auto-import': '^2.10.0',
