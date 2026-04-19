@@ -14,8 +14,8 @@ const MODERN_DEV_OVERRIDES = {
   'ember-cli': '^6.12.0',
   'ember-resolver': '^13.0.0',
   'ember-auto-import': '^2.10.0',
-  '@ember/test-helpers': '^4.0.4',
-  'ember-qunit': '^8.1.1',
+  '@ember/test-helpers': '^5.4.1',
+  'ember-qunit': '^9.0.4',
   webpack: '^5.0.0',
 };
 // `ember-cli-htmlbars` is a runtime dependency of this addon, so scenario
@@ -91,30 +91,36 @@ module.exports = async function () {
           },
         },
       },
-      // Under strict embroider, @ember/test-helpers@2 expects `ember-cli-htmlbars`
-      // to be ambient — strict resolvers reject it. @ember/test-helpers@4 removes
-      // that ambient require entirely. ember-qunit 8+ peers on test-helpers 3+.
+      // Under strict embroider we have to use the modern test toolchain
+      // (5.x test-helpers, 9.x ember-qunit, 13.x ember-resolver) to avoid
+      // ambient `require` patterns and legacy `ember` barrel imports.
+      // `@ember/string` is also required at the app level because
+      // ember-resolver 13 imports from it.
       embroiderSafe({
         npm: {
           devDependencies: {
-            '@ember/test-helpers': '^4.0.4',
-            'ember-qunit': '^8.1.1',
+            'ember-resolver': '^13.0.0',
+            '@ember/test-helpers': '^5.4.1',
+            'ember-qunit': '^9.0.4',
           },
           dependencies: {
             'ember-auto-import': '^2.10.0',
             'ember-cli-htmlbars': '^7.0.1',
+            '@ember/string': '^3.1.1',
           },
         },
       }),
       embroiderOptimized({
         npm: {
           devDependencies: {
-            '@ember/test-helpers': '^4.0.4',
-            'ember-qunit': '^8.1.1',
+            'ember-resolver': '^13.0.0',
+            '@ember/test-helpers': '^5.4.1',
+            'ember-qunit': '^9.0.4',
           },
           dependencies: {
             'ember-auto-import': '^2.10.0',
             'ember-cli-htmlbars': '^7.0.1',
+            '@ember/string': '^3.1.1',
           },
         },
       }),
