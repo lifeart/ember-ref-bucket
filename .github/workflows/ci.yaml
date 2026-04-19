@@ -21,7 +21,7 @@
 #$   - scenario: ember-canary
 #$   - scenario: ember-default-with-jquery
 #$   - scenario: ember-classic
-#$ nodeVersion: 12.x
+#$ nodeVersion: 18.x
 #$ packageManager: yarn
 #
 
@@ -34,20 +34,21 @@ on:
   pull_request:
 
 env:
-  NODE_VERSION: '14.x'
+  NODE_VERSION: '18.x'
 
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 1
 
-    - uses: actions/setup-node@v2-beta
+    - uses: actions/setup-node@v4
       with:
         node-version: '${{ env.NODE_VERSION }}'
+        cache: yarn
 
     - name: Install Dependencies
       run: yarn install --frozen-lockfile
@@ -67,13 +68,14 @@ jobs:
         browser: [chrome]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 1
 
-    - uses: actions/setup-node@v2-beta
+    - uses: actions/setup-node@v4
       with:
         node-version: '${{ env.NODE_VERSION }}'
+        cache: yarn
 
     - name: Install Dependencies
       run: yarn install --frozen-lockfile
@@ -94,11 +96,11 @@ jobs:
         browser: [chrome]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 1
 
-    - uses: actions/setup-node@v2-beta
+    - uses: actions/setup-node@v4
       with:
         node-version: '${{ env.NODE_VERSION }}'
 
@@ -129,13 +131,14 @@ jobs:
         ]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 1
 
-    - uses: actions/setup-node@v2-beta
+    - uses: actions/setup-node@v4
       with:
         node-version: '${{ env.NODE_VERSION }}'
+        cache: yarn
 
     - name: Install Dependencies
       run: yarn install --frozen-lockfile
