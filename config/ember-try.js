@@ -12,6 +12,7 @@ const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 // test-helpers 3+, etc.). Keep the main deps untouched.
 const MODERN_DEV_OVERRIDES = {
   'ember-cli': '^6.12.0',
+  'ember-resolver': '^13.0.0',
   'ember-auto-import': '^2.10.0',
   '@ember/test-helpers': '^4.0.4',
   'ember-qunit': '^8.1.1',
