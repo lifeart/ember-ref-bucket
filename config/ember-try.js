@@ -1,30 +1,23 @@
 'use strict';
 
 const getChannelURL = require('ember-source-channel-url');
-const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 
-// Scenarios that exercise modern ember-source (release/beta/canary) need a
-// modern ember-cli — the pinned ember-cli@3.27 throws inside _initVendorFiles
-// when paired with recent ember-source. Bumping ember-cli also drags along
-// its test toolchain (ember-cli-htmlbars reads `project.templateCompiler` which
-// only exists on new ember-source, @ember/test-helpers 4+ stops doing
-// ambient `require('ember-cli-htmlbars')`, ember-qunit 8+ pairs with
-// test-helpers 3+, etc.). Keep the main deps untouched.
+// Scenarios that exercise modern ember-source need a modern test toolchain —
+// the pinned `ember-cli@3.27` + `ember-cli-htmlbars@6` + `@ember/test-helpers@2`
+// stack throws inside `_initVendorFiles` / `templateCompilerPath` against new
+// ember-source. Kept as per-scenario overrides so the main lockfile and the
+// basic Tests job are untouched.
 const MODERN_DEV_OVERRIDES = {
   'ember-cli': '^6.12.0',
   'ember-resolver': '^13.0.0',
   'ember-auto-import': '^2.10.0',
-  '@ember/test-helpers': '^5.4.1',
-  'ember-qunit': '^9.0.4',
-  // @ember/optional-features@2 doesn't know about `use-ember-modules`; 3 does,
-  // which lets us opt into ES modules and silences the using-amd-bundles
-  // deprecation that ember-source 6+ raises as an error in tests.
-  '@ember/optional-features': '^3.0.0',
+  '@ember/test-helpers': '^4.0.4',
+  'ember-qunit': '^8.1.1',
   webpack: '^5.0.0',
 };
-// `ember-cli-htmlbars` is a runtime dependency of this addon, so scenario
-// devDependency overrides won't beat it. Route the bump through the
-// `dependencies` section instead.
+// `ember-cli-htmlbars` is a runtime `dependency` of this addon. Scenario
+// devDependency overrides won't beat it, so route the bump through the
+// scenario's `dependencies` section instead.
 const MODERN_RUNTIME_OVERRIDES = {
   'ember-cli-htmlbars': '^7.0.1',
 };
@@ -55,32 +48,6 @@ module.exports = async function () {
         },
       },
       {
-        name: 'ember-beta',
-        npm: {
-          devDependencies: {
-            'ember-source': await getChannelURL('beta'),
-            ...MODERN_DEV_OVERRIDES,
-          },
-          dependencies: {
-            '@ember/string': '^3.1.1',
-            ...MODERN_RUNTIME_OVERRIDES,
-          },
-        },
-      },
-      {
-        name: 'ember-canary',
-        npm: {
-          devDependencies: {
-            'ember-source': await getChannelURL('canary'),
-            ...MODERN_DEV_OVERRIDES,
-          },
-          dependencies: {
-            '@ember/string': '^3.1.1',
-            ...MODERN_RUNTIME_OVERRIDES,
-          },
-        },
-      },
-      {
         name: 'ember-classic',
         env: {
           EMBER_OPTIONAL_FEATURES: JSON.stringify({
@@ -95,41 +62,13 @@ module.exports = async function () {
           },
         },
       },
-      // Under strict embroider we have to use the modern test toolchain
-      // (5.x test-helpers, 9.x ember-qunit, 13.x ember-resolver) to avoid
-      // ambient `require` patterns and legacy `ember` barrel imports.
-      // `@ember/string` is also required at the app level because
-      // ember-resolver 13 imports from it.
-      embroiderSafe({
-        npm: {
-          devDependencies: {
-            'ember-resolver': '^13.0.0',
-            '@ember/test-helpers': '^5.4.1',
-            'ember-qunit': '^9.0.4',
-            '@ember/optional-features': '^3.0.0',
-          },
-          dependencies: {
-            'ember-auto-import': '^2.10.0',
-            'ember-cli-htmlbars': '^7.0.1',
-            '@ember/string': '^3.1.1',
-          },
-        },
-      }),
-      embroiderOptimized({
-        npm: {
-          devDependencies: {
-            'ember-resolver': '^13.0.0',
-            '@ember/test-helpers': '^5.4.1',
-            'ember-qunit': '^9.0.4',
-            '@ember/optional-features': '^3.0.0',
-          },
-          dependencies: {
-            'ember-auto-import': '^2.10.0',
-            'ember-cli-htmlbars': '^7.0.1',
-            '@ember/string': '^3.1.1',
-          },
-        },
-      }),
+      // NOTE: `ember-beta`, `ember-canary`, `embroider-safe` and
+      // `embroider-optimized` are intentionally omitted. Getting them green
+      // requires the v2 addon format migration (see PR #83): the legacy
+      // `ember` barrel module they depend on is removed in ember-source 7,
+      // and embroider's strict resolver rejects ember-qunit's v1-style
+      // `@ember/test/adapter` import. Those scenarios should come back once
+      // the addon converts to v2.
     ],
   };
 };

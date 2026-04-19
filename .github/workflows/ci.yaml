@@ -120,14 +120,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # ember-beta, ember-canary, embroider-safe, embroider-optimized are
+        # deferred until the v2 addon migration (PR #83) lands. See
+        # config/ember-try.js for the full rationale.
         ember-try-scenario: [
           ember-lts-3.28,
           ember-release,
-          ember-beta,
-          ember-canary,
-          ember-classic,
-          embroider-safe,
-          embroider-optimized
+          ember-classic
         ]
 
     steps:
