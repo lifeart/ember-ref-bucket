@@ -8,7 +8,7 @@ const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 // when paired with recent ember-source. Pair that bump with ember-source's
 // matching ember-auto-import major so the dep graph stays coherent.
 const MODERN_EMBER_CLI_OVERRIDES = {
-  'ember-cli': '^5.12.0',
+  'ember-cli': '^6.12.0',
   'ember-auto-import': '^2.10.0',
   webpack: '^5.0.0',
 };
@@ -76,8 +76,14 @@ module.exports = async function () {
           },
         },
       },
+      // Under strict embroider, @ember/test-helpers@2 expects `ember-cli-htmlbars`
+      // to be ambient, which embroider-safe/optimized reject. `@ember/test-helpers@3`
+      // resolves it through its own deps, so bump it just for these scenarios.
       embroiderSafe({
         npm: {
+          devDependencies: {
+            '@ember/test-helpers': '^3.3.1',
+          },
           dependencies: {
             'ember-auto-import': '^2.10.0',
           },
@@ -85,6 +91,9 @@ module.exports = async function () {
       }),
       embroiderOptimized({
         npm: {
+          devDependencies: {
+            '@ember/test-helpers': '^3.3.1',
+          },
           dependencies: {
             'ember-auto-import': '^2.10.0',
           },
