@@ -6,6 +6,10 @@ module.exports = function (environment) {
     environment,
     rootURL: '/',
     locationType: 'auto',
+    // ember-export-application-global's initializer uses the removed
+    // Ember.String.classify on modern ember-source. Disabled here so the
+    // dummy app keeps booting across all ember-try scenarios.
+    exportApplicationGlobal: false,
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build

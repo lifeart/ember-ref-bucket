@@ -120,15 +120,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Scenarios known to be broken by toolchain drift (ember-cli 3.27 vs
-        # newer ember-source, @embroider/test-setup 0.41 peer-dep handling,
-        # dummy app using removed @ember/string APIs) are intentionally
-        # excluded until a coordinated upgrade lands:
-        #   - ember-release, ember-beta, ember-canary
-        #   - embroider-safe, embroider-optimized
         ember-try-scenario: [
           ember-lts-3.28,
-          ember-classic
+          ember-release,
+          ember-beta,
+          ember-canary,
+          ember-classic,
+          embroider-safe,
+          embroider-optimized
         ]
 
     steps:
