@@ -21,7 +21,7 @@
 #$   - scenario: ember-canary
 #$   - scenario: ember-default-with-jquery
 #$   - scenario: ember-classic
-#$ nodeVersion: 18.x
+#$ nodeVersion: 20.x
 #$ packageManager: yarn
 #
 
@@ -34,7 +34,7 @@ on:
   pull_request:
 
 env:
-  NODE_VERSION: '18.x'
+  NODE_VERSION: '20.x'
 
 jobs:
   lint:

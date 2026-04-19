@@ -74,6 +74,9 @@
   "engines": {
     "node": "14.* || 16.* || >= 18"
   },
+  "resolutions": {
+    "execa": "^5.1.1"
+  },
   "ember": {
     "edition": "octane"
   },
