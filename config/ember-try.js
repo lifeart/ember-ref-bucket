@@ -7,15 +7,21 @@ const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 // modern ember-cli — the pinned ember-cli@3.27 throws inside _initVendorFiles
 // when paired with recent ember-source. Bumping ember-cli also drags along
 // its test toolchain (ember-cli-htmlbars reads `project.templateCompiler` which
-// only exists on new ember-source, @ember/test-helpers 3.x pairs with
-// ember-qunit 8.x, etc.). Keep the main devDependencies untouched.
-const MODERN_EMBER_CLI_OVERRIDES = {
+// only exists on new ember-source, @ember/test-helpers 4+ stops doing
+// ambient `require('ember-cli-htmlbars')`, ember-qunit 8+ pairs with
+// test-helpers 3+, etc.). Keep the main deps untouched.
+const MODERN_DEV_OVERRIDES = {
   'ember-cli': '^6.12.0',
-  'ember-cli-htmlbars': '^7.0.1',
   'ember-auto-import': '^2.10.0',
-  '@ember/test-helpers': '^3.3.1',
+  '@ember/test-helpers': '^4.0.4',
   'ember-qunit': '^8.1.1',
   webpack: '^5.0.0',
+};
+// `ember-cli-htmlbars` is a runtime dependency of this addon, so scenario
+// devDependency overrides won't beat it. Route the bump through the
+// `dependencies` section instead.
+const MODERN_RUNTIME_OVERRIDES = {
+  'ember-cli-htmlbars': '^7.0.1',
 };
 
 module.exports = async function () {
@@ -35,10 +41,11 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('release'),
-            ...MODERN_EMBER_CLI_OVERRIDES,
+            ...MODERN_DEV_OVERRIDES,
           },
           dependencies: {
             '@ember/string': '^3.1.1',
+            ...MODERN_RUNTIME_OVERRIDES,
           },
         },
       },
@@ -47,10 +54,11 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('beta'),
-            ...MODERN_EMBER_CLI_OVERRIDES,
+            ...MODERN_DEV_OVERRIDES,
           },
           dependencies: {
             '@ember/string': '^3.1.1',
+            ...MODERN_RUNTIME_OVERRIDES,
           },
         },
       },
@@ -59,10 +67,11 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('canary'),
-            ...MODERN_EMBER_CLI_OVERRIDES,
+            ...MODERN_DEV_OVERRIDES,
           },
           dependencies: {
             '@ember/string': '^3.1.1',
+            ...MODERN_RUNTIME_OVERRIDES,
           },
         },
       },
@@ -82,27 +91,29 @@ module.exports = async function () {
         },
       },
       // Under strict embroider, @ember/test-helpers@2 expects `ember-cli-htmlbars`
-      // to be ambient, which embroider-safe/optimized reject. `@ember/test-helpers@3`
-      // resolves it through its own deps, and ember-qunit 8+ peers on it.
+      // to be ambient — strict resolvers reject it. @ember/test-helpers@4 removes
+      // that ambient require entirely. ember-qunit 8+ peers on test-helpers 3+.
       embroiderSafe({
         npm: {
           devDependencies: {
-            '@ember/test-helpers': '^3.3.1',
+            '@ember/test-helpers': '^4.0.4',
             'ember-qunit': '^8.1.1',
           },
           dependencies: {
             'ember-auto-import': '^2.10.0',
+            'ember-cli-htmlbars': '^7.0.1',
           },
         },
       }),
       embroiderOptimized({
         npm: {
           devDependencies: {
-            '@ember/test-helpers': '^3.3.1',
+            '@ember/test-helpers': '^4.0.4',
             'ember-qunit': '^8.1.1',
           },
           dependencies: {
             'ember-auto-import': '^2.10.0',
+            'ember-cli-htmlbars': '^7.0.1',
           },
         },
       }),
