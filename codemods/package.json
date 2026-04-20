@@ -1,0 +1,25 @@
+{
+  "name": "ember-ref-bucket-codemod",
+  "version": "1.0.0",
+  "description": "Codemods for ember-ref-bucket",
+  "bin": {
+    "ember-ref-bucket-codemod": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "ember-template-recast": "^5.0.3",
+    "globby": "^11.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "license": "MIT"
+}

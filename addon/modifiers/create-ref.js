@@ -2,7 +2,7 @@ import Modifier from 'ember-modifier';
 import { getOwner } from '@ember/application';
 
 import { action } from '@ember/object';
-import { assert, warn } from '@ember/debug';
+import { assert } from '@ember/debug';
 import {
   setGlobalRef,
   bucketFor,
@@ -70,11 +70,9 @@ export default class RefModifier extends Modifier {
 
     if (args.some((name) => name in named)) {
       assert(
-        `"ember-ref-modifier", looks like you trying to use {{${
-          named.debugName
-        }}} without tracked flag or alias, but, with properties, related to tracked modifier (${args.join(
+        `ember-ref-bucket: observer options (${args.join(
           ', '
-        )})`,
+        )}) require the tracked flag or a tracked alias`,
         this.isTracked(named)
       );
     }
@@ -117,18 +115,13 @@ export default class RefModifier extends Modifier {
   }
   modify(element, positional, named) {
     const name = this.name(positional);
-    const ctx = this.ctx(named, positional);
+    const ctx = this.ctx(positional);
     this._key = name;
     this._ctx = ctx;
     this._element = element;
 
-    warn(
-      `Preprocessor was not executed on create-ref modifier. If the reference is not set, check that ember-ref-bucket is included in the dependencies (not devDependencies) in package.json.`,
-      typeof named.debugName === 'string' || !!named.bucket,
-      { id: 'ember-ref-bucket.no-preprocessor' }
-    );
     assert(
-      `You must provide string as first positional argument for {{${named.debugName}}}`,
+      `ember-ref-bucket: You must provide a string as the first positional argument for {{create-ref}}`,
       typeof name === 'string' && name.length > 0
     );
     this.validateTrackedOptions(named);
@@ -155,13 +148,8 @@ export default class RefModifier extends Modifier {
     }
   }
 
-  ctx(named = {}, positional = [undefined]) {
-    assert(
-      `ember-ref-bucket: You trying to use {{${named.debugName}}} as local reference for template-only component. Replace it to {{global-ref "${positional[0]}"}}`,
-      named.bucket !== null
-    );
-
-    return named.bucket || getOwner(this);
+  ctx([, context] = []) {
+    return context ?? getOwner(this);
   }
   isTracked(named = {}) {
     return named.tracked || false;

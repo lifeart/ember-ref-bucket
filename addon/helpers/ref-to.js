@@ -5,8 +5,8 @@ import { getOwner } from '@ember/application';
 
 export default class RefToHelper extends Helper {
   _watcher = null;
-  compute([name], { bucket, tracked }) {
-    const bucketRef = bucket || getOwner(this);
+  compute([name, context], { tracked }) {
+    const bucketRef = context ?? getOwner(this);
     if (this._name !== name) {
       if (this._watcher) {
         unregisterDestructor(this, this._watcher);

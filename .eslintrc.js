@@ -55,5 +55,31 @@ module.exports = {
       files: ['tests/**/*-test.{js,ts}'],
       extends: ['plugin:qunit/recommended'],
     },
+    // codemods source files
+    {
+      files: ['codemods/src/**/*.js'],
+      parserOptions: {
+        sourceType: 'script',
+      },
+      env: {
+        browser: false,
+        node: true,
+      },
+      rules: {
+        'no-process-exit': 'off',
+      },
+    },
+    // codemods test files
+    {
+      files: ['codemods/tests/**/*.js'],
+      parserOptions: {
+        sourceType: 'script',
+      },
+      env: {
+        browser: false,
+        node: true,
+        jest: true,
+      },
+    },
   ],
 };
