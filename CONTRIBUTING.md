@@ -2,17 +2,17 @@
 
 ## Installation
 
-Development needs Node.js 20.19 or newer and Yarn 1 (the published addon
+Development needs Node.js 20.19 or newer and pnpm 10 (the published addon
 itself has no such requirement).
 
 * `git clone <repository-url>`
 * `cd ember-ref-bucket`
-* `yarn install`
+* `pnpm install`
 
 ## Linting
 
-* `yarn lint`
-* `yarn lint:fix`
+* `pnpm lint`
+* `pnpm lint:fix`
 
 ## Running tests
 
@@ -23,10 +23,10 @@ itself has no such requirement).
 ## Codemod
 
 The migration codemod lives in `codemods/` as a separate package
-(`ember-ref-bucket-codemod`) with its own `package.json` and `yarn.lock`.
+(`ember-ref-bucket-codemod`). It is a pnpm workspace member, so the root
+`pnpm install` covers it.
 
-* `cd codemods && yarn install`
-* `yarn test`
+* `pnpm --filter ember-ref-bucket-codemod test`
 
 ## Running the dummy application
 

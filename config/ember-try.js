@@ -19,16 +19,11 @@ const LEGACY_DEV_OVERRIDES = {
 
 module.exports = async function () {
   return {
-    packageManager: 'yarn',
+    packageManager: 'pnpm',
     scenarios: [
-      {
-        name: 'ember-lts-3.28',
-        npm: {
-          devDependencies: {
-            ...LEGACY_DEV_OVERRIDES,
-          },
-        },
-      },
+      // `ember-release` goes first on purpose: pnpm reuses versions left in
+      // node_modules by the previous scenario, and the legacy stack's
+      // @ember/test-waiters 3 does not load on ember-source 7.
       {
         name: 'ember-release',
         npm: {
@@ -36,6 +31,14 @@ module.exports = async function () {
             'ember-source': await getChannelURL('release'),
             // ember-source 7 fails to build under older ember-cli releases.
             'ember-cli': '^6.12.0',
+          },
+        },
+      },
+      {
+        name: 'ember-lts-3.28',
+        npm: {
+          devDependencies: {
+            ...LEGACY_DEV_OVERRIDES,
           },
         },
       },
