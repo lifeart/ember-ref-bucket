@@ -248,6 +248,7 @@ See the [Contributing](CONTRIBUTING.md) guide for details.
 
 Version matrix:
 
+Explicit `this` context, no AST transform - v6 (see [migration guide](MIGRATION-v5-to-v6.md));
 Ember-Modifier 4 - v5;
 Ember 3.28 - v4;
 Ember 3.24 - v3

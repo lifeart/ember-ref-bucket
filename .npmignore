@@ -14,6 +14,7 @@
 /.eslintignore
 /.eslintrc.js
 /.git/
+/.github/
 /.gitignore
 /.prettierignore
 /.prettierrc.js
@@ -21,6 +22,7 @@
 /.travis.yml
 /.watchmanconfig
 /bower.json
+/codemods/
 /config/ember-try.js
 /CONTRIBUTING.md
 /ember-cli-build.js

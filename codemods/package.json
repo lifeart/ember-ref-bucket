@@ -23,5 +23,16 @@
   "engines": {
     "node": ">= 18"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lifeart/ember-ref-bucket.git",
+    "directory": "codemods"
+  },
+  "homepage": "https://github.com/lifeart/ember-ref-bucket/tree/master/codemods#readme",
+  "keywords": [
+    "ember-ref-bucket",
+    "codemod",
+    "ember-codemod"
+  ],
   "license": "MIT"
 }
