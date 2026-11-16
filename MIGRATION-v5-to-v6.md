@@ -58,4 +58,4 @@ files:
 npx ember-ref-bucket-codemod ./app ./tests
 ```
 
-See the [codemod README](codemods/README.md) for full details.
+See the [codemod README](https://github.com/lifeart/ember-ref-bucket/blob/master/codemods/README.md) for full details.
