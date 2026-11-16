@@ -2,7 +2,7 @@ import Modifier from 'ember-modifier';
 import { getOwner } from '@ember/application';
 
 import { action } from '@ember/object';
-import { assert, warn } from '@ember/debug';
+import { assert } from '@ember/debug';
 import {
   setGlobalRef,
   bucketFor,
@@ -13,6 +13,7 @@ import { getReferencedKeys } from '../utils/prototype-reference';
 import { registerDestructor } from '@ember/destroyable';
 
 export default class RefModifier extends Modifier {
+  debugName = 'create-ref';
   _key;
   _ctx;
   _element;
@@ -26,7 +27,7 @@ export default class RefModifier extends Modifier {
       this.cleanMutationObservers();
       this.cleanResizeObservers();
       getNodeDestructors(element).forEach((cb) => cb());
-      if (element === bucketFor(this._ctx).get(this._key)) {
+      if (this._ctx && element === bucketFor(this._ctx).get(this._key)) {
         bucketFor(this._ctx).add(this._key, null);
       }
       delete this._element;
@@ -70,11 +71,9 @@ export default class RefModifier extends Modifier {
 
     if (args.some((name) => name in named)) {
       assert(
-        `"ember-ref-modifier", looks like you trying to use {{${
-          named.debugName
-        }}} without tracked flag or alias, but, with properties, related to tracked modifier (${args.join(
+        `ember-ref-bucket: observer options (${args.join(
           ', '
-        )})`,
+        )}) require the tracked flag or a tracked alias`,
         this.isTracked(named)
       );
     }
@@ -117,25 +116,27 @@ export default class RefModifier extends Modifier {
   }
   modify(element, positional, named) {
     const name = this.name(positional);
-    const ctx = this.ctx(named, positional);
+    assert(
+      `ember-ref-bucket: You must provide a string as the first positional argument for {{${this.debugName}}}`,
+      typeof name === 'string' && name.length > 0
+    );
+    const ctx = this.ctx(positional);
+    const prevKey = this._key;
+    const prevCtx = this._ctx;
+    const prevElement = this._element;
     this._key = name;
     this._ctx = ctx;
     this._element = element;
 
-    warn(
-      `Preprocessor was not executed on create-ref modifier. If the reference is not set, check that ember-ref-bucket is included in the dependencies (not devDependencies) in package.json.`,
-      typeof named.debugName === 'string' || !!named.bucket,
-      { id: 'ember-ref-bucket.no-preprocessor' }
-    );
-    assert(
-      `You must provide string as first positional argument for {{${named.debugName}}}`,
-      typeof name === 'string' && name.length > 0
-    );
     this.validateTrackedOptions(named);
     this.cleanMutationObservers();
     this.cleanResizeObservers();
-    if (name !== this._key || this._ctx !== ctx) {
-      bucketFor(this._ctx).add(this._key, null);
+    if (
+      prevCtx &&
+      (name !== prevKey || ctx !== prevCtx) &&
+      bucketFor(prevCtx).get(prevKey) === prevElement
+    ) {
+      bucketFor(prevCtx).add(prevKey, null);
     }
 
     watchFor(name, ctx, () => {
@@ -155,13 +156,12 @@ export default class RefModifier extends Modifier {
     }
   }
 
-  ctx(named = {}, positional = [undefined]) {
+  ctx([name, context] = []) {
     assert(
-      `ember-ref-bucket: You trying to use {{${named.debugName}}} as local reference for template-only component. Replace it to {{global-ref "${positional[0]}"}}`,
-      named.bucket !== null
+      `ember-ref-bucket: {{${this.debugName} "${name}"}} requires a context as the second positional argument, e.g. {{${this.debugName} "${name}" this}}. In template-only components, where \`this\` is null, use a global variant instead.`,
+      context !== undefined && context !== null
     );
-
-    return named.bucket || getOwner(this);
+    return context;
   }
   isTracked(named = {}) {
     return named.tracked || false;

@@ -1,0 +1,2 @@
+input.gjs:5 no context in a template-only <template>, where `this` is undefined. Pass a context or use the global variant.
+input.gjs:6 `bucket=this` in a template-only <template>, where `this` is undefined. v5 fell back to the owner here; pass a real context or use the global variant.

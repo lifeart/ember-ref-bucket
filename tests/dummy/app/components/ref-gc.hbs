@@ -4,7 +4,7 @@
 </div>
 
 {{#each this.items as |item|}}
-  <div {{create-ref (concat "item-" item) bucket=this}}>
+  <div {{create-ref (concat "item-" item) this}}>
     {{item}}
   </div>
 {{/each}}

@@ -1,0 +1,4 @@
+<div {{create-global-ref "foo" bucket=this}}>hello</div>
+<div {{create-tracked-global-ref "bar" bucket=this.ctx}}>hello</div>
+{{global-ref-to "foo" bucket=this}}
+{{tracked-global-ref-to "bar" bucket=this}}
