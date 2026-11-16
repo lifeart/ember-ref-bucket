@@ -2,35 +2,30 @@
 
 const getChannelURL = require('ember-source-channel-url');
 
-// Scenarios that exercise modern ember-source need a modern test toolchain —
-// the pinned `ember-cli@3.27` + `ember-cli-htmlbars@6` + `@ember/test-helpers@2`
-// stack throws inside `_initVendorFiles` / `templateCompilerPath` against new
-// ember-source. Kept as per-scenario overrides so the main lockfile and the
-// basic Tests job are untouched.
-const MODERN_DEV_OVERRIDES = {
-  'ember-cli': '^6.12.0',
-  'ember-resolver': '^13.0.0',
-  'ember-auto-import': '^2.10.0',
-  '@ember/test-helpers': '^4.0.4',
-  'ember-qunit': '^8.1.1',
-  webpack: '^5.0.0',
-};
-// `ember-cli-htmlbars` is a runtime `dependency` of this addon. Scenario
-// devDependency overrides won't beat it, so route the bump through the
-// scenario's `dependencies` section instead.
-const MODERN_RUNTIME_OVERRIDES = {
-  'ember-cli-htmlbars': '^7.0.1',
+// The dummy app runs on a modern toolchain (ember-source 6 LTS, ember-qunit 9,
+// @ember/test-helpers 5). That stack does not support Ember 3.28, so the
+// legacy scenarios swap the test toolchain back to the last versions that do.
+// `tests/test-helper.js` is written to boot under both.
+const LEGACY_DEV_OVERRIDES = {
+  'ember-source': '~3.28.8',
+  'ember-cli': '~3.28.6',
+  'ember-cli-htmlbars': '^6.3.0',
+  'ember-resolver': '^8.1.0',
+  'ember-load-initializers': '^2.1.2',
+  '@ember/test-helpers': '^2.9.4',
+  'ember-qunit': '^6.2.0',
+  '@glimmer/component': '^1.1.2',
 };
 
 module.exports = async function () {
   return {
-    useYarn: true,
+    packageManager: 'yarn',
     scenarios: [
       {
         name: 'ember-lts-3.28',
         npm: {
           devDependencies: {
-            'ember-source': '~3.28.8',
+            ...LEGACY_DEV_OVERRIDES,
           },
         },
       },
@@ -39,11 +34,8 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': await getChannelURL('release'),
-            ...MODERN_DEV_OVERRIDES,
-          },
-          dependencies: {
-            '@ember/string': '^3.1.1',
-            ...MODERN_RUNTIME_OVERRIDES,
+            // ember-source 7 fails to build under older ember-cli releases.
+            'ember-cli': '^6.12.0',
           },
         },
       },
@@ -57,18 +49,19 @@ module.exports = async function () {
           }),
         },
         npm: {
+          devDependencies: {
+            ...LEGACY_DEV_OVERRIDES,
+          },
           ember: {
             edition: 'classic',
           },
         },
       },
       // NOTE: `ember-beta`, `ember-canary`, `embroider-safe` and
-      // `embroider-optimized` are intentionally omitted. Getting them green
-      // requires the v2 addon format migration (see PR #83): the legacy
-      // `ember` barrel module they depend on is removed in ember-source 7,
-      // and embroider's strict resolver rejects ember-qunit's v1-style
-      // `@ember/test/adapter` import. Those scenarios should come back once
-      // the addon converts to v2.
+      // `embroider-optimized` are intentionally omitted. This is still a v1
+      // addon: embroider's strict resolver needs the v2 addon format, which
+      // has not been done yet (PR #83 only removed the AST transform that
+      // blocked it). Bring those scenarios back with the v2 conversion.
     ],
   };
 };
