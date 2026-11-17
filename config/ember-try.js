@@ -39,6 +39,8 @@ module.exports = async function () {
           },
         },
       },
+      // Classic edition only exists on Ember 3.x, so this runs on the 3.28
+      // stack with the classic optional features switched on.
       {
         name: 'ember-classic',
         env: {

@@ -15,13 +15,10 @@
 #$ browsers:
 #$   - chrome
 #$ emberTryScenarios:
-#$   - scenario: ember-lts-3.20
+#$   - scenario: ember-lts-3.28
 #$   - scenario: ember-release
-#$   - scenario: ember-beta
-#$   - scenario: ember-canary
-#$   - scenario: ember-default-with-jquery
 #$   - scenario: ember-classic
-#$ nodeVersion: 20.x
+#$ nodeVersion: 22.x
 #$ packageManager: yarn
 #
 
@@ -34,7 +31,7 @@ on:
   pull_request:
 
 env:
-  NODE_VERSION: '20.x'
+  NODE_VERSION: '22.x'
 
 jobs:
   lint:
@@ -114,7 +111,6 @@ jobs:
   try-scenarios:
     name: Tests - ${{ matrix.ember-try-scenario }}
     runs-on: ubuntu-latest
-    continue-on-error: true
     needs: test
 
     strategy:

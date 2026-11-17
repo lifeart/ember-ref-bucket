@@ -2,6 +2,9 @@
 
 ## Installation
 
+Development needs Node.js 20.19 or newer and Yarn 1 (the published addon
+itself has no such requirement).
+
 * `git clone <repository-url>`
 * `cd ember-ref-bucket`
 * `yarn install`
@@ -38,12 +41,12 @@ Releases are done by hand from `master`; CI only runs lint and tests.
 
 ### Addon (`ember-ref-bucket`)
 
-1. Make sure CI is green on `master`.
+1. Make sure CI is green on `master`, including every `Tests - <scenario>` job.
 2. Bump `version` in `package.json` and commit it as `Bump version to X.Y.Z`.
 3. Tag the commit with the bare version (no `v` prefix): `git tag -a X.Y.Z -m "X.Y.Z"`.
 4. `git push origin master --follow-tags`
 5. `npm publish` (asks for a one-time password).
-6. Create a GitHub release for the tag: `gh release create X.Y.Z --generate-notes`.
+6. Create a GitHub release for the tag: `gh release create X.Y.Z --title "<short summary>" --generate-notes`.
 
 `npm pack --dry-run` shows what will be published; `.npmignore` keeps the
 dummy app, CI config and `codemods/` out of the tarball.
